@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synonym Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <div id="splash-logo">
+            <svg id="animated-logo" viewBox="0 0 120 120">
+                <defs>
+                    <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#88C0D0;" />
+                        <stop offset="100%" style="stop-color:#B48EAD;" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Rotating outer dots -->
+                <g class="rotating-dots-group">
+                    <circle class="dot" cx="60" cy="10" r="2.5" />
+                    <circle class="dot" cx="110" cy="60" r="2.5" />
+                    <circle class="dot" cx="60" cy="110" r="2.5" />
+                    <circle class="dot" cx="10" cy="60" r="2.5" />
+                </g>
+
+                <!-- Drawing path -->
+                <path class="logo-path" d="M 60,15 L 105,60 L 60,105 L 15,60 Z" stroke="url(#line-gradient)" stroke-width="2" fill="none" filter="url(#glow)"/>
+
+                <!-- Converging circles -->
+                <circle class="logo-circle circle-1" cx="60" cy="35" r="5" />
+                <circle class="logo-circle circle-2" cx="85" cy="60" r="5" />
+                <circle class="logo-circle circle-3" cx="60" cy="85" r="5" />
+                <circle class="logo-circle circle-4" cx="35" cy="60" r="5" />
+
+                <!-- Core element -->
+                <circle class="logo-core" cx="60" cy="60" r="12" fill="#81A1C1" />
+            </svg>
+        </div>
+        <div id="splash-text-container">
+            <div id="splash-text-line1" class="splash-text-line" data-text="The right word is always at your fingertips."></div>
+            <div id="splash-text-line2" class="splash-text-line" data-text="Say what you really mean."></div>
+        </div>
+    </div>
+    <div class="header-icons">
+        <div id="auth-container" class="header-icon">
+            <div id="login-button" title="Login with Google"><i class="fab fa-google"></i> Login</div>
+            <div id="user-profile" class="hidden">
+                <span id="user-name"></span>
+                <button id="logout-button" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        <div id="bookmark-list-button" class="header-icon">
+            <i class="fas fa-bookmark"></i>
+        </div>
+        <div id="settings-button" class="header-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- 履歴パネル -->
+        <div class="panel history-panel">
+            <div class="history-header">
+                <h4>History</h4>
+                <button id="clear-history-button" title="Clear all history">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            <div id="history-list">
+                <p class="placeholder">Your history will appear here.</p>
+            </div>
+        </div>
+
+        <!-- 中央パネル -->
+        <div class="panel left-panel">
+            <div class="input-area">
+                <textarea id="text-input" placeholder="Enter your English text here..."></textarea>
+                <div id="processed-text"></div>
+                <div id="word-counter" class="counter">0 words</div>
+            </div>
+                        <div class="button-group">
+                <button id="process-button">Process Text</button>
+                <button id="clear-text-button" class="secondary-button">Clear Text</button>
+            </div>
+        </div>
+
+        <!-- 右パネル -->
+        <div class="panel right-panel">
+            <div id="synonym-list-container">
+                <h2>Synonym Candidates</h2>
+                <div id="synonym-list">
+                    <p class="placeholder">Enter your API key in the settings and process text to see synonym candidates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-settings-modal" class="close-button">&times;</button>
+            <h2>API Key Settings</h2>
+            <p>To use this tool, you need a Google AI (Gemini) API key.</p>
+            <ol>
+                <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> and create your API key.</li>
+                <li>Ensure the Gemini API is enabled for your project.</li>
+                <li>Paste the key below and save.</li>
+            </ol>
+            <div class="api-key-input-container">
+                <label for="api-key-input">Your Gemini API Key:</label>
+                <input type="password" id="api-key-input" placeholder="Paste your API key here">
+            </div>
+            <button id="save-api-key" class="save-button">Save</button>
+            <div id="save-api-key-feedback" class="save-feedback"></div>
+
+            <div class="setting-section-divider"></div>
+
+            <div class="layout-mode-container">
+                <h3>Layout Mode</h3>
+                <p>Switch to a single-column layout suitable for narrow screens.</p>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="layout-mode-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-section-divider"></div>
+
+            <div class="theme-selector-container">
+                <h3>Theme Selection</h3>
+                <div class="theme-options">
+                    <button class="theme-preview-button" data-theme="light">
+                        <div class="theme-preview light-preview"></div>
+                        <span>Light Mode</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="dark">
+                        <div class="theme-preview dark-preview"></div>
+                        <span>Dark Mode</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="nord">
+                        <div class="theme-preview nord-preview"></div>
+                        <span>Nord Theme</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="glass">
+                        <div class="theme-preview glass-preview"></div>
+                        <span>Glass Theme</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting-section-divider"></div>
+
+            <div class="model-selector-container">
+                <h3>AI Model Selection</h3>
+                <div class="model-options">
+                    <button class="model-select-button" data-model="gemini-2.5-pro">
+                        <span>Gemini 2.5 Pro</span>
+                    </button>
+                    <button class="model-select-button" data-model="gemini-2.5-flash">
+                        <span>Gemini 2.5 Flash</span>
+                    </button>
+                    <button class="model-select-button" data-model="gemini-2.5-flash-lite">
+                        <span>Gemini 2.5 Flash-Lite</span>
+                    </button>
+                </div>
+            </div>
+
+
+
+            <div class="setting-section-divider"></div>
+
+            <div class="external-link-container">
+                <h3>Other Tools</h3>
+                <a href="https://msena1230.github.io/textcleaner1/" target="_blank" class="external-link-button">
+                    Go to Text Cleaner
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ブックマークモーダル -->
+    <div id="bookmark-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-bookmark-modal" class="close-button">&times;</button>
+            <h2>Bookmarked Words</h2>
+            <div id="bookmark-list">
+                <!-- ブックマークされた単語がここに表示されます -->
+            </div>
+            <button id="start-flashcards-button" class="save-button">Start Flashcard Quiz</button>
+        </div>
+    </div>
+
+    <!-- フラッシュカードモーダル -->
+    <div id="flashcard-modal" class="modal-overlay hidden">
+        <div class="flashcard-container">
+            <button id="close-flashcard-modal" class="close-button flashcard-close">&times;</button>
+            <div id="flashcard" class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <!-- 単語がここに表示されます -->
+                    </div>
+                    <div class="flashcard-back">
+                        <!-- 答えがここに表示されます -->
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard-controls">
+                <button id="prev-flashcard-button" class="control-button"><i class="fas fa-arrow-left"></i></button>
+                <p id="flashcard-progress"></p>
+                <button id="next-flashcard-button" class="control-button"><i class="fas fa-arrow-right"></i></button>
+                <button id="complete-flashcard-button" class="control-button complete-button">Complete & Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="progress-container" class="hidden">
+        <div id="progress-bar"></div>
+        <div id="progress-label">
+            <span id="progress-message">Initializing...</span>
+            <span id="progress-percentage">(0%)</span>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

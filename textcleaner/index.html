@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Cleaner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="splash-screen">
+        <div id="splash-logo">
+            <svg id="animated-logo" viewBox="0 0 120 120">
+                <defs>
+                    <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#88C0D0;" />
+                        <stop offset="100%" style="stop-color:#B48EAD;" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Rotating outer dots -->
+                <g class="rotating-dots-group">
+                    <circle class="dot" cx="60" cy="10" r="2.5" />
+                    <circle class="dot" cx="110" cy="60" r="2.5" />
+                    <circle class="dot" cx="60" cy="110" r="2.5" />
+                    <circle class="dot" cx="10" cy="60" r="2.5" />
+                </g>
+
+                <!-- Drawing path -->
+                <path class="logo-path" d="M 60,15 L 105,60 L 60,105 L 15,60 Z" stroke="url(#line-gradient)" stroke-width="2" fill="none" filter="url(#glow)"/>
+
+                <!-- Converging circles -->
+                <circle class="logo-circle circle-1" cx="60" cy="35" r="5" />
+                <circle class="logo-circle circle-2" cx="85" cy="60" r="5" />
+                <circle class="logo-circle circle-3" cx="60" cy="85" r="5" />
+                <circle class="logo-circle circle-4" cx="35" cy="60" r="5" />
+
+                <!-- Core element -->
+                <circle class="logo-core" cx="60" cy="60" r="12" fill="#81A1C1" />
+            </svg>
+        </div>
+        <div id="splash-text-container">
+            <div id="splash-text-line1" class="splash-text-line" data-text="Text Cleaner"></div>
+            <div id="splash-text-line2" class="splash-text-line" data-text="Refine your text."></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="panel history-panel">
+            <div class="history-header">
+                <h4>History</h4>
+                <button id="clear-history-button" title="Clear all history">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            <div id="history-list">
+                <p class="placeholder">Your history will appear here.</p>
+            </div>
+        </div>
+
+        <div class="panel input-panel">
+            <h2>Input</h2>
+            <textarea id="text-input" placeholder="Paste your text here..."></textarea>
+            <button id="process-button">Clean Text</button>
+        </div>
+
+        <div class="panel output-panel">
+            <h2>Output</h2>
+            <div id="output-display" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

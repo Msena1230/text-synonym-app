@@ -1,0 +1,9 @@
+# Dependencies
+/node_modules
+
+# Firebase config
+firebase-config.js
+
+# IDE / OS files
+.vscode/
+.DS_Store

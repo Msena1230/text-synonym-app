@@ -1,0 +1,1092 @@
+:root {
+    --primary-color: #4a89dc;
+    --primary-color-dark: #3a7ac8;
+    --primary-color-rgb: 74, 137, 220;
+
+    --light-bg: #f5f7fa;
+    --light-panel-bg: #ffffff;
+    --light-text: #333;
+    --light-text-secondary: #777;
+    --light-border: #e0e0e0;
+    --light-hover: #e9f2ff;
+    --light-highlight: #d4e3fc;
+
+    --dark-bg: #121212;
+    --dark-panel-bg: #1e1e1e;
+    --dark-text: #e0e0e0;
+    --dark-text-secondary: #888;
+    --dark-border: #333;
+    --dark-hover: #2a2a2a;
+    --dark-highlight: #3a4a6b;
+
+    --background-color: var(--light-bg);
+    --panel-background-color: var(--light-panel-bg);
+    --text-color: var(--light-text);
+    --text-color-secondary: var(--light-text-secondary);
+    --border-color: var(--light-border);
+    --hover-color: var(--light-hover);
+    --highlight-color: var(--light-highlight);
+
+    --font-body: 'Roboto', 'Noto Sans JP', sans-serif;
+    --transition-speed: 0.3s;
+    --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Nord Theme */
+    --nord-bg: #2E3440;
+    --nord-panel-bg: #3B4252;
+    --nord-text: #D8DEE9;
+    --nord-text-secondary: #E5E9F0;
+    --nord-border: #4C566A;
+    --nord-hover: #434C5E;
+    --nord-highlight: #8FBCBB; /* Nord8 - Greenish Blue */
+    --nord-primary-color: #81A1C1; /* Nord10 - Blue */
+    --nord-primary-color-dark: #5E81AC; /* Nord11 - Dark Blue */
+    --nord-primary-color-rgb: 129, 161, 193; /* New RGB for Nord primary color */
+
+    /* Glass Theme */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-panel-bg: rgba(255, 255, 255, 0.2);
+    --glass-text: #333333;
+    --glass-text-secondary: #555555;
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-hover: rgba(255, 255, 255, 0.3);
+    --glass-highlight: rgba(135, 206, 250, 0.3); /* Sky Blue highlight */
+    --glass-primary-color: #87CEFA; /* Sky Blue */
+    --glass-primary-color-dark: #6495ED; /* Cornflower Blue */
+    --glass-primary-color-rgb: 135, 206, 250; /* Sky Blue RGB */
+}
+
+body.dark-mode {
+    --background-color: var(--dark-bg);
+    --panel-background-color: var(--dark-panel-bg);
+    --text-color: var(--dark-text);
+    --text-color-secondary: var(--dark-text-secondary);
+    --border-color: var(--dark-border);
+    --hover-color: var(--dark-hover);
+    --highlight-color: var(--dark-highlight);
+    --primary-color: #5c9bdc; /* Slightly desaturated blue */
+    --primary-color-dark: #4a89dc; /* Adjusted dark primary */
+    --primary-color-rgb: 92, 155, 220; /* RGB for the new primary color */
+}
+
+body.nord-theme {
+    --background-color: var(--nord-bg);
+    --panel-background-color: var(--nord-panel-bg);
+    --text-color: var(--nord-text);
+    --text-color-secondary: var(--nord-text-secondary);
+    --border-color: var(--nord-border);
+    --hover-color: var(--nord-hover);
+    --highlight-color: var(--nord-highlight);
+    --primary-color: var(--nord-primary-color);
+    --primary-color-dark: var(--nord-primary-color-dark);
+    --primary-color-rgb: var(--nord-primary-color-rgb);
+}
+
+body.glass-theme {
+    --background-color: var(--glass-bg);
+    --panel-background-color: var(--glass-panel-bg);
+    --text-color: var(--glass-text);
+    --text-color-secondary: var(--glass-text-secondary);
+    --border-color: var(--glass-border);
+    --hover-color: var(--glass-hover);
+    --highlight-color: var(--glass-highlight);
+    --primary-color: var(--glass-primary-color);
+    --primary-color-dark: var(--glass-primary-color-dark);
+    --primary-color-rgb: var(--glass-primary-color-rgb);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    transition: background-color var(--transition-speed) var(--transition-ease), color var(--transition-speed) var(--transition-ease);
+}
+
+.main-container {
+    display: flex;
+    height: 100vh;
+    position: relative; /* For absolute positioning of history panel */
+}
+
+.panel {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--panel-background-color);
+    transition: background-color var(--transition-speed) var(--transition-ease);
+    height: 100%;
+}
+
+.history-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 50px; /* Collapsed width */
+    height: 100%;
+    border-right: 1px solid var(--border-color);
+    transition: width var(--transition-speed) var(--transition-ease);
+    overflow: hidden;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    padding-top: 0.5rem; /* ロゴのスペースを調整 */
+}
+
+.history-logo {
+    width: 25px; /* ロゴのサイズをさらに縮小 */
+    height: 25px;
+    background: radial-gradient(circle at center, #81A1C1 0%, #5E81AC 100%); /* 青系グラデーション */
+    border-radius: 50%;
+    margin-left: 0px; /* 左端に揃える */
+    margin-bottom: 0.5rem; /* 下マージンは維持 */
+    flex-shrink: 0; /* 縮小しない */
+    transition: opacity 0.2s ease;
+}
+
+.history-panel:hover {
+    width: 20%; /* Expanded width */
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+}
+
+body.vertical-layout .left-panel,
+body.vertical-layout .right-panel {
+    width: 100%;
+    height: auto; /* 高さを自動に */
+    min-height: 50vh; /* 最低限の高さを確保 */
+    padding: 1rem; /* paddingをリセット */
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.vertical-layout .right-panel {
+    border-bottom: none;
+}
+
+/* --- History Panel --- */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+}
+
+.history-header h4 {
+    margin: 0;
+    color: var(--primary-color);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.history-panel:hover .history-header h4 {
+    opacity: 1;
+}
+
+#clear-history-button {
+    background: none;
+    border: none;
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+#clear-history-button:hover {
+    color: #ff4d4d;
+    background-color: var(--hover-color);
+}
+
+#history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.history-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item:hover {
+    background-color: var(--hover-color);
+}
+
+.history-item.active {
+    background-color: var(--light-highlight);
+    border-color: var(--primary-color);
+    font-weight: bold;
+}
+
+body.dark-mode .history-item.active {
+    background-color: var(--dark-highlight);
+}
+
+body.nord-theme .history-item.active {
+    background-color: var(--nord-highlight);
+}
+
+.history-item-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.history-panel:hover .history-item-text {
+    opacity: 1;
+}
+
+.delete-history-item-btn {
+    background: none;
+    border: none;
+    color: var(--text-color-secondary);
+    visibility: hidden; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.history-item:hover .delete-history-item-btn {
+    visibility: visible; /* Show on hover */
+    opacity: 1;
+}
+
+.delete-history-item-btn:hover {
+    color: #ff4d4d;
+}
+
+.input-area {
+    flex-grow: 1;
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--panel-background-color);
+    transition: border-color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease);
+}
+
+.input-area:has(#text-input:focus) {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+#text-input, #processed-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    padding-bottom: 2.5rem; /* Make space for word counter */
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    border: none;
+    background: none;
+    color: var(--text-color);
+}
+
+#text-input:focus, #processed-text:focus {
+    outline: none;
+}
+
+#processed-text {
+    z-index: 1;
+    overflow-y: auto;
+}
+
+#process-button {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--light-panel-bg);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#process-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+#suggestion-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    height: 100%;
+}
+
+#suggestion-list-container h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.placeholder {
+    color: var(--text-color-secondary);
+    text-align: center;
+    margin-top: 3rem;
+}
+
+#word-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.9rem;
+    color: var(--text-color-secondary);
+    z-index: 2;
+}
+
+.suggestion-group {
+    background-color: var(--panel-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.suggestion-group:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dark-mode .suggestion-group:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.original-sentence {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.suggestion-item {
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: var(--text-color-secondary);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    line-height: 1.6;
+}
+
+.suggestion-item:hover {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+.suggestible {
+    cursor: pointer;
+    border-bottom: 2px dotted var(--primary-color);
+    transition: background-color var(--transition-speed) var(--transition-ease);
+}
+
+.suggestible.modified {
+    border-bottom-style: solid;
+}
+
+.highlighted-sentence {
+    background-color: var(--highlight-color);
+    border-radius: 3px;
+}
+
+.suggestion-group.highlighted {
+    animation: highlight-animation 2s ease-in-out;
+}
+
+@keyframes highlight-animation {
+    0% { background-color: var(--highlight-color); }
+    100% { background-color: var(--panel-background-color); }
+}
+
+
+/* --- Header Icons --- */
+.header-icons {
+    position: fixed;
+    top: 1rem;
+    right: 1.5rem;
+    z-index: 1000;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--panel-background-color);
+    color: var(--text-color-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-icon:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+/* --- Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 1;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: var(--panel-background-color);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transform: scale(1);
+    transition: transform var(--transition-speed) ease, background-color var(--transition-speed) var(--transition-ease);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-overlay.hidden .modal-content {
+    transform: scale(0.9);
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.modal-content p, .modal-content ol {
+    line-height: 1.6;
+    color: var(--text-color-secondary);
+}
+
+.modal-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.modal-content a:hover {
+    text-decoration: underline;
+}
+
+.api-key-input-container {
+    margin-top: 1.5rem;
+}
+
+.api-key-input-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+#api-key-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.save-button {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--light-panel-bg);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.save-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* --- Theme Selector --- */
+.theme-selector-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.theme-selector-container h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.theme-options {
+    display: grid; /* グリッドレイアウトに変更 */
+    grid-template-columns: repeat(4, 1fr); /* 常に4カラムに固定 */
+    gap: 1rem;
+}
+
+.theme-preview-button {
+    background-color: var(--panel-background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.theme-preview-button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.theme-preview-button.selected {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.3);
+    transform: translateY(-2px);
+}
+
+.theme-preview {
+    width: 60px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 各テーマのプレビュー色 */
+.light-preview {
+    background-color: #f5f7fa; /* light-bg */
+    border-color: #e0e0e0;
+}
+
+.dark-preview {
+    background-color: #121212; /* dark-bg */
+    border-color: #333;
+}
+
+.nord-preview {
+    background-color: #2E3440; /* nord-bg */
+    border-color: #4C566A;
+}
+
+.glass-preview {
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* --- Progress Bar --- */
+#progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: var(--panel-background-color);
+    z-index: 3000;
+    transition: opacity 0.5s ease;
+}
+
+#progress-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.5s ease-out;
+}
+
+#progress-label {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    z-index: 3001;
+    transition: opacity 0.5s ease;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#progress-message {
+    transition: opacity 0.5s ease-in-out;
+}
+
+#progress-message.fading-out {
+    opacity: 0;
+}
+
+#progress-percentage {
+    display: none; /* Hide percentage display */
+}
+
+#progress-container.hidden + #progress-label {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Splash Screen --- */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #2E3440; /* Nordの背景色に固定 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out; /* フェードアウトを速く */
+}
+
+#splash-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#splash-logo {
+    width: 180px; /* サイズを大きく */
+    height: 180px;
+}
+
+#animated-logo {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* 1. 回転する外周のドット */
+.rotating-dots-group {
+    transform-origin: center;
+    animation: rotate-logo 10s linear infinite;
+}
+
+.dot {
+    fill: #88C0D0;
+    opacity: 0;
+    animation: dot-fade-in 1s ease-out 0.2s forwards;
+}
+
+@keyframes rotate-logo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes dot-fade-in {
+    to { opacity: 0.6; }
+}
+
+/* 2. 描画されるパス */
+.logo-path {
+    stroke-dasharray: 320; /* 新しいパスの長さに調整 */
+    stroke-dashoffset: 320;
+    animation: draw-path 1.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+}
+
+@keyframes draw-path {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* 3. 中心に収束する円 */
+.logo-circle {
+    opacity: 0;
+    transform: scale(0);
+    fill: #E5E9F0;
+    animation: move-and-pulse-circle 1s ease-out forwards;
+}
+
+.circle-1 { animation-delay: 0.3s; }
+.circle-2 { animation-delay: 0.4s; }
+.circle-3 { animation-delay: 0.5s; }
+.circle-4 { animation-delay: 0.6s; }
+
+@keyframes move-and-pulse-circle {
+    0% {
+        opacity: 0;
+        transform: translate(60px, 60px) scale(0); /* 中心から外へ */
+    }
+    60% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+/* 4. 中心のコア */
+.logo-core {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: url(#glow);
+    animation: core-fade-in 0.8s ease-out 0.9s forwards;
+}
+
+@keyframes core-fade-in {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#splash-text-container {
+    margin-top: 2rem;
+    text-align: center;
+    position: relative;
+    height: 6rem; /* 2行分の高さを確保 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.splash-text-line {
+    opacity: 0; /* 初期状態は非表示 */
+    font-weight: bold;
+    color: #FFFFFF;
+    width: 100%;
+}
+
+#splash-text-line1 {
+    font-size: 1.8rem; /* 少し小さく */
+}
+
+#splash-text-line2 {
+    font-size: 2.5rem;
+    margin-top: 0.5rem;
+}
+
+#splash-text-line1.active {
+    animation: textFadeIn 1s ease-out forwards;
+}
+
+@keyframes textFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#splash-text-line2.active {
+    animation: textZoomIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes textZoomIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --- Layout Mode Switch --- */
+.setting-section-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 2rem 0;
+}
+
+.layout-mode-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* 画面が狭い場合に折り返す */
+}
+
+.layout-mode-container div {
+    flex-basis: 70%; /* 説明文の幅を調整 */
+}
+
+.layout-mode-container h3 {
+    margin: 0 0 0.25rem 0;
+    color: var(--text-color);
+}
+
+.layout-mode-container p {
+    margin: 0;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0; /* スイッチが縮まないように */
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--primary-color);
+}
+
+input:focus + .toggle-slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+.left-panel {
+    width: 60%;
+    border-right: 1px solid var(--border-color);
+    transition: border-color var(--transition-speed) var(--transition-ease);
+    padding-left: 60px; /* Space for collapsed history panel */
+}
+
+.right-panel {
+    width: 40%;
+}
+
+/* --- Vertical Layout --- */
+body.vertical-layout .main-container {
+    flex-direction: column;
+    height: auto;
+    padding-top: 4rem; /* ヘッダーアイコンとの重なりを避ける */
+}
+
+body.vertical-layout .history-panel {
+    display: none; /* 縦長モードでは履歴を非表示 */
+}
+
+body.vertical-layout .left-panel,
+body.vertical-layout .right-panel {
+    width: 100%;
+    height: auto; /* 高さを自動に */
+    min-height: 50vh; /* 最低限の高さを確保 */
+    padding: 1rem; /* paddingをリセット */
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.vertical-layout .right-panel {
+    border-bottom: none;
+}
+
+/* --- Model Selector --- */
+.model-selector-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.model-selector-container h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.model-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3つのモデルなので3カラム */
+    gap: 1rem;
+}
+
+.model-select-button {
+    background-color: var(--panel-background-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.model-select-button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.model-select-button.selected {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.3);
+    transform: translateY(-2px);
+}
+
+/* --- External Link Button --- */
+.external-link-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.external-link-container h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.external-link-button {
+    display: block; /* ブロック要素にして幅いっぱいに広げる */
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--light-panel-bg);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center; /* テキストを中央揃え */
+    text-decoration: none; /* リンクの下線を削除 */
+}
+
+.external-link-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* --- Styles for Change Explanation --- */
+.suggestion-explanation {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1rem;
+}
+
+.original-sentence strong,
+.suggestion-item strong {
+    color: var(--text-color);
+    font-weight: bold; /* Ensure the labels are bold */
+}
+
+.original-sentence,
+.suggestion-item {
+    line-height: 1.6;
+}
+
+.step-header {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+#suggestion-list .step-header:first-child {
+    margin-top: 0;
+}
