@@ -607,6 +607,10 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBookmarkModalButton.addEventListener('click', closeBookmarkModal);
     bookmarkModal.addEventListener('click', (e) => { if (e.target === bookmarkModal) closeBookmarkModal(); });
 
+    // --- Paraphraser Pro Modal Logic ---
+    const paraphraserButton = document.getElementById('paraphraser-button');
+    const paraphraserModal = document.getElementById(\'paraphraser-modal\');\n    const closeParaphraserModalButton = document.getElementById(\'close-paraphraser-modal\');\n    const paraphraserInput = document.getElementById(\'paraphraser-input\');\n    const paraphraserOutput = document.getElementById(\'paraphraser-output\');\n    const paraphraseProcessButton = document.getElementById(\'paraphrase-process-button\');\n    const paraphraseCopyButton = document.getElementById(\'paraphrase-copy-button\');\n\n    const openParaphraserModal = () => paraphraserModal.classList.remove(\'hidden\');\n    const closeParaphraserModal = () => paraphraserModal.classList.add(\'hidden\');\n\n    paraphraserButton.addEventListener(\'click\', openParaphraserModal);\n    closeParaphraserModalButton.addEventListener(\'click\', closeParaphraserModal);\n    paraphraserModal.addEventListener(\'click\', (e) => { if (e.target === paraphraserModal) closeParaphraserModal(); });\n\n    paraphraseCopyButton.addEventListener(\'click\', () => {\n        const textToCopy = paraphraserOutput.value;\n        if (textToCopy) {\n            navigator.clipboard.writeText(textToCopy).then(() => {\n                const originalText = paraphraseCopyButton.textContent;\n                paraphraseCopyButton.textContent = \'Copied!\';\n                paraphraseCopyButton.disabled = true;\n                setTimeout(() => {\n                    paraphraseCopyButton.textContent = originalText;\n                    paraphraseCopyButton.disabled = false;\n                }, 2000);\n            }).catch(err => {\n                console.error(\'Failed to copy text: \', err);\n                alert(\'Failed to copy text.\');\n            });\n        }\n    });\n\n    const handleParaphrase = async () => {\n        if (!geminiApiKey) {\n            alert(\'Please set your Gemini API key in the settings first.\');\n            openSettingsModal();\n            return;\n        }\n\n        const inputText = paraphraserInput.value.trim();\n        if (!inputText) {\n            alert(\'Please enter some text to paraphrase.\');\n            return;\n        }\n\n        paraphraseProcessButton.disabled = true;\n        paraphraseProcessButton.textContent = \'Paraphrasing...\';\n        paraphraserOutput.value = \'\';\n\n        const paraphraserPrompt = `You are an expert paraphraser. Your goal is to rewrite the user\'s text to make it sound more human and less like it was written by an AI. Follow these instructions precisely:\\n\\n1.  **Vary Sentence Structure (Burstiness)**:\\n    *   Mix short, punchy sentences with longer, more complex ones.\\n    *   Break up uniform sentence lengths by splitting or merging sentences where appropriate.\\n\\n2.  **Diversify Word Choice (Perplexity)**:\\n    *   Avoid predictable, common AI-generated words.\\n    *   Introduce less common but contextually appropriate words to increase surprise and randomness.\\n\\n3.  **Eliminate AI-isms (Stylometry)**:\\n    *   Replace common AI phrases (e.g., \"Showcasing\", \"delve into\", \"Furthermore,\", \"It is worth noting that...\") with more natural alternatives (e.g., \"showing\", \"Also,\").\\n    *   Modify the use of pronouns, auxiliary verbs, and punctuation to match a more human style.\\n\\n4.  **Inject Human Imperfection (Cognitive & Rhetorical)**:\\n    *   Strategically start some sentences with \"And\" or \"But\".\\n    *   Include subjective markers like \"I believe,\" or \"In my experience,\" where it feels natural.\\n    *   Use hedging language like \"perhaps\" or \"it seems\" to soften overly confident or assertive tones.\\n\\n5.  **CRITICAL RULE: Do NOT use contractions.**\\n    *   Expand all contractions. For example, \"it\'s\" must become \"it is\", \"I\'m\" must become \"I am\", \"don\'t\" must become \"do not\", etc.\\n\\nNow, apply these rules to the following text:\\n\\n---\\n${inputText}\\n---\`;\n\n        const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiApiKey}`;\n        const requestBody = { contents: [{ parts: [{ text: paraphraserPrompt }] }] };\n\n        try {\n            const response = await fetch(url, { method: \'POST\', headers: { \'Content-Type\': \'application/json\' }, body: JSON.stringify(requestBody) });\n            if (!response.ok) {\n                const errorData = await response.json();\n                const errorMessage = errorData.error?.message || \'Unknown API error\';\n                throw new Error(`API Error: ${errorMessage}`);\n            }\n            const data = await response.json();\n            const resultText = data.candidates[0]?.content?.parts[0]?.text;\n            if (!resultText) {\n                throw new Error(\'API returned an empty response.\');\n            }\n            paraphraserOutput.value = resultText.trim();\n        } catch (error) {\n            console.error(\'Paraphrasing error:\', error);\n            paraphraserOutput.value = `An error occurred: ${error.message}`;\n        }\n        finally {\n            paraphraseProcessButton.disabled = false;\n            paraphraseProcessButton.textContent = \'Paraphrase\';\n        }\n    };\n\n    paraphraseProcessButton.addEventListener(\'click\', handleParaphrase);
+
     // --- Word Counter & Clear ---
     textInput.addEventListener('input', () => {
         const wordCount = textInput.value.trim().split(/\s+/).filter(Boolean).length;
@@ -648,16 +652,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const isOutputPopulated = processedText.innerText.trim().length > 0;
-        const textToAnalyze = isOutputPopulated ? processedText.innerText.trim() : textInput.value.trim();
-
-        if (!textToAnalyze) {
-            showNotification('AI Detect', 'No text to analyze. Please enter text in the input field.');
+        const textToAnalyze = processedText.innerText;
+        if (!textToAnalyze.trim()) {
+            showNotification('AI Detect', 'No text found in the output area to analyze.');
             return;
         }
 
-        // Store original content only if we are analyzing the output panel
-        const originalProcessedTextContent = isOutputPopulated ? processedText.innerHTML : '';
+        // Store original content to revert after highlighting
+        const originalProcessedTextContent = processedText.innerHTML;
 
         showProgressBar();
         setProgress(10, 'Analyzing text for AI content...');
@@ -677,25 +679,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const scoreStringHtml = aiDetectResult.data.score_string;
 
         if (scoreStringHtml) {
-            // If we analyzed the input text, we need to switch the view to the processedText panel
-            if (!isOutputPopulated) {
-                textInput.style.zIndex = -1;
-                processedText.style.zIndex = 1;
-            }
-
             // Display highlighted text for 10 seconds
             processedText.innerHTML = scoreStringHtml;
             showNotification('AI Detection Result', `AI Detection Score: ${scorePercentage}% AI-generated.\nHighlighted parts indicate AI-generated content.`);
 
             setTimeout(() => {
-                // Revert to original content or switch back to the input view
-                if (isOutputPopulated) {
-                    processedText.innerHTML = originalProcessedTextContent;
-                } else {
-                    processedText.innerHTML = '';
-                    textInput.style.zIndex = 1;
-                    processedText.style.zIndex = -1;
-                }
+                // Revert to original content after 10 seconds
+                processedText.innerHTML = originalProcessedTextContent;
             }, 10000); // 10 seconds
         } else {
             showNotification('AI Detection Result', `AI Detection Score: ${scorePercentage}% AI-generated.`);
@@ -952,9 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
 Your turn. Text: "${sanitizedText}"`;
         } else {
             // For spaced languages, include spaces as separate components
-            prompt = `Analyze the following text in ${sourceLanguage} and extract a comprehensive list of all its meaningful components. It is crucial that you include individual words, punctuation, spaces, and explicit newline characters (\\n) ONLY if they are present in the original text as separate elements in the array. Preserve the original order and casing. Return the result as a single JSON array of strings.\n\nText: "He decided to give up.\\nThen he looked for a new job."
-
-Example Output:
+            prompt = `Analyze the following text in ${sourceLanguage} and extract a comprehensive list of all its meaningful components. It is crucial that you include individual words, punctuation, spaces, and explicit newline characters (\\n) ONLY if they are present in the original text as separate elements in the array. Preserve the original order and casing. Return the result as a single JSON array of strings.\n\nText: "He decided to give up.\\nThen he looked for a new job."\n\nExample Output:
 ["He", " ", "decided", " ", "to", " ", "give up", ".", "\\n", "Then", " ", "he", " ", "looked for", " ", "a", " ", "new", " ", "job", "."]
 
 Your turn. Text: "${sanitizedText}"`;
@@ -966,9 +954,7 @@ Your turn. Text: "${sanitizedText}"`;
             const data = await response.json();
             const resultText = data.candidates[0]?.content?.parts[0]?.text;
             if (!resultText) return { status: 'error', message: 'API returned empty response for phrase extraction.' };
-            const jsonMatch = resultText.match(/\[.*\]/s);
-            if (!jsonMatch) return { status: 'error', message: 'Could not find valid JSON array in the API response.' };
-            const cleanedText = jsonMatch[0];
+            const cleanedText = resultText.replace(/```json\n|```/g, '').replace(/[ --]/g, '').trim();
             return { status: 'success', data: JSON.parse(cleanedText) };
         } catch (error) {
             console.error('Phrase extraction error:', error);
@@ -1035,7 +1021,7 @@ Your turn. Text: "${sanitizedText}"`;
         const prompt = `Given the following full text in ${sourceLanguage}:
 """
 ${text}
-""
+"""
 
 For each word/phrase in the following JSON array, analyze all its occurrences within the full text and provide contextual information.
 Words to analyze: ${JSON.stringify(words)}
@@ -1067,9 +1053,7 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
             const data = await response.json();
             const resultText = data.candidates[0]?.content?.parts[0]?.text;
             if (resultText) {
-                const jsonMatch = resultText.match(/\{.*\}/s);
-                if (!jsonMatch) return { status: 'error', message: 'Could not find valid JSON object in the API response.' };
-                const cleanedText = jsonMatch[0];
+                const cleanedText = resultText.replace(/```json\n|```/g, '').replace(/[ --]/g, '').trim();
                 return { status: 'success', data: JSON.parse(cleanedText) };
             } else {
                 return { status: 'error', message: 'API returned empty response.' };

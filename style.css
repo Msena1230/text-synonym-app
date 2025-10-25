@@ -56,7 +56,7 @@
     --glass-primary-color-rgb: 135, 206, 250; /* Sky Blue RGB */
 }
 
-body.dark-mode {
+body.dark-theme {
     --background-color: var(--dark-bg);
     --panel-background-color: var(--dark-panel-bg);
     --text-color: var(--dark-text);
@@ -230,7 +230,7 @@ body {
     font-weight: bold;
 }
 
-body.dark-mode .history-item.active {
+body.dark-theme .history-item.active {
     background-color: var(--dark-highlight);
 }
 
@@ -270,10 +270,10 @@ body.nord-theme .history-item.active {
     background: none;
     border: none;
     color: var(--text-color-secondary);
+    font-size: 1rem;
     cursor: pointer;
     padding: 0.25rem;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
+    border-radius: 4px;
 }
 
 .rename-history-item-btn:hover {
@@ -449,7 +449,7 @@ body.nord-theme .history-item.active {
     100% { background-color: var(--panel-background-color); }
 }
 
-.dark-mode .synonym-group:hover {
+body.dark-theme .synonym-group:hover {
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
@@ -521,14 +521,7 @@ body.nord-theme .synonym-item.selected {
     transform: scale(1.1);
 }
 
-#auth-container {
-    border-radius: 8px; /* Override the circular shape */
-}
 
-#auth-container {
-    width: auto; /* Adjust width based on content */
-    padding: 0 1rem;
-}
 
 #login-button {
     display: flex;
@@ -1050,7 +1043,7 @@ body.nord-theme .synonym-item.selected {
     border: none;
     background-color: var(--primary-color);
     color: var(--light-panel-bg);
-    font-size: 1rem;
+    font-size: 1.rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
     display: flex;
@@ -1450,4 +1443,212 @@ body.vertical-layout .right-panel {
 
 .external-link-button:hover {
     background-color: var(--primary-color-dark);
+}
+
+/* --- Auth in Modal --- */
+.auth-container-modal {
+    padding-bottom: 1rem;
+}
+
+.auth-container-modal #login-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #4285F4; /* Google Blue */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.auth-container-modal #login-button:hover {
+    background-color: #357ae8;
+}
+
+.auth-container-modal #user-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: var(--hover-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+}
+
+.auth-container-modal #user-name {
+    font-weight: bold;
+}
+
+.auth-container-modal #logout-button {
+    background-color: transparent;
+    color: var(--text-color-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.auth-container-modal #logout-button:hover {
+    color: #ff4d4d;
+    border-color: #ff4d4d;
+}
+
+/* --- Developer Zone --- */
+#developer-login-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+#developer-login-container .api-key-input-container {
+    margin-top: 0;
+}
+
+#dev-login-button {
+    grid-column: 1 / -1; /* Span both columns */
+    margin-top: 0.5rem; /* Add a little space above the button */
+}
+
+#dev-login-feedback {
+    grid-column: 1 / -1; /* Span both columns */
+}
+
+#dev-memo-pad {
+    width: 100%;
+    min-height: 200px; /* Give it a decent minimum height */
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    resize: vertical; /* Allow vertical resizing */
+    transition: all var(--transition-speed) var(--transition-ease);
+}
+
+#dev-memo-pad:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+/* --- AI Detect Button --- */
+#ai-detect-button {
+    padding: 0.5rem 0.75rem; /* Smaller padding */
+    font-size: 0.9rem; /* Smaller font size */
+    display: flex; /* To center icon and text if any */
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem; /* Space between icon and text if any */
+}
+
+#ai-detect-button i {
+    font-size: 1.1rem; /* Adjust icon size */
+}
+
+/* --- Notification Modal Styling --- */
+.notification-content {
+    background-color: var(--panel-background-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 400px;
+    text-align: center;
+}
+
+#notification-close-button {
+    margin-top: 1rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: var(--light-panel-bg);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#notification-close-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* --- Unified Input Field Styling --- */
+#sapling-api-key-input,
+#dev-username,
+#dev-password {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+}
+
+#sapling-api-key-input:focus,
+#dev-username:focus,
+#dev-password:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+/* --- Translation Language Selector --- */
+.translation-language-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.translation-language-container h3 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.translation-language-container p {
+    margin: 0 0 1rem 0;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+}
+
+#translation-language-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+}
+
+#translation-language-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+/* Hide scrollbar for history list but allow scrolling */
+#history-list::-webkit-scrollbar {
+    display: none;
+}
+
+#history-list {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }

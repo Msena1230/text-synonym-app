@@ -6,4 +6,4 @@ firebase-config.js
 
 # IDE / OS files
 .vscode/
-.DS_Store
+.DS_Storefirebase-debug.log 

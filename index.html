@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synonym Finder</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -55,17 +56,10 @@
         </div>
     </div>
     <div class="header-icons">
-        <div id="auth-container" class="header-icon">
-            <div id="login-button" title="Login with Google"><i class="fab fa-google"></i> Login</div>
-            <div id="user-profile" class="hidden">
-                <span id="user-name"></span>
-                <button id="logout-button" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
-            </div>
-        </div>
-        <div id="bookmark-list-button" class="header-icon">
+        <div id="bookmark-list-button" class="header-icon" title="Bookmarks">
             <i class="fas fa-bookmark"></i>
         </div>
-        <div id="settings-button" class="header-icon">
+        <div id="settings-button" class="header-icon" title="Settings">
             <i class="fas fa-cog"></i>
         </div>
     </div>
@@ -88,12 +82,14 @@
         <div class="panel left-panel">
             <div class="input-area">
                 <textarea id="text-input" placeholder="Enter your English text here..."></textarea>
-                <div id="processed-text"></div>
+                <div id="processed-text" contenteditable="true"></div>
                 <div id="word-counter" class="counter">0 words</div>
             </div>
                         <div class="button-group">
                 <button id="process-button">Process Text</button>
+                <button id="copy-output-button" class="secondary-button">Copy Output</button>
                 <button id="clear-text-button" class="secondary-button">Clear Text</button>
+                <button id="ai-detect-button" class="secondary-button" title="Detect AI Content"><i class="fas fa-search"></i></button>
             </div>
         </div>
 
@@ -112,6 +108,25 @@
     <div id="settings-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="close-settings-modal" class="close-button">&times;</button>
+            
+            <h3>Account</h3>
+            <div id="auth-container" class="auth-container-modal">
+                <div id="user-profile" class="hidden">
+                    <span id="user-name"></span>
+                    <button id="logout-button" title="Logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+                <div id="guest-view">
+                    <ul class="auth-benefits">
+                        <li><i class="fas fa-infinity"></i> Unlimited Requests</li>
+                        <li><i class="fas fa-sync-alt"></i> Sync History & Bookmarks</li>
+                        <li><i class="fas fa-cogs"></i> Save All Your Settings</li>
+                    </ul>
+                    <div id="login-button" title="Login with Google"><i class="fab fa-google"></i> Login with Google</div>
+                </div>
+            </div>
+
+            <div class="setting-section-divider"></div>
+
             <h2>API Key Settings</h2>
             <p>To use this tool, you need a Google AI (Gemini) API key.</p>
             <ol>
@@ -125,6 +140,13 @@
             </div>
             <button id="save-api-key" class="save-button">Save</button>
             <div id="save-api-key-feedback" class="save-feedback"></div>
+
+            <div class="api-key-input-container">
+                <label for="sapling-api-key-input">Your Sapling AI API Key:</label>
+                <input type="password" id="sapling-api-key-input" placeholder="Paste your Sapling API key here">
+            </div>
+            <button id="save-sapling-api-key" class="save-button">Save Sapling Key</button>
+            <div id="save-sapling-api-key-feedback" class="save-feedback"></div>
 
             <div class="setting-section-divider"></div>
 
@@ -178,15 +200,42 @@
                 </div>
             </div>
 
+            <div class="setting-section-divider"></div>
 
+            <div class="translation-language-container">
+                <h3>Translation Language</h3>
+                <p>Choose the language for word meanings and synonym translations.</p>
+                <select id="translation-language-select">
+                    <option value="Japanese">Japanese</option>
+                    <option value="German">German</option>
+                    <option value="English">English</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Portuguese">Portuguese</option>
+                    <option value="Russian">Russian</option>
+                </select>
+            </div>
 
             <div class="setting-section-divider"></div>
 
-            <div class="external-link-container">
-                <h3>Other Tools</h3>
-                <a href="https://msena1230.github.io/textcleaner1/" target="_blank" class="external-link-button">
-                    Go to Text Cleaner
-                </a>
+            <div class="setting-section-divider"></div>
+
+            <div class="setting-section-divider"></div>
+
+            <h2>Developer Zone</h2>
+            <div id="developer-login-container">
+                <div class="api-key-input-container">
+                    <label for="dev-password">Developer Password:</label>
+                    <input type="password" id="dev-password" placeholder="Enter password">
+                </div>
+                <button id="dev-login-button" class="save-button">Login</button>
+                <div id="dev-login-feedback" class="save-feedback"></div>
+            </div>
+
+            <div id="developer-memo-container" class="hidden">
+                <h4>Developer Memo</h4>
+                <textarea id="dev-memo-pad" placeholder="Your notes here..." readonly></textarea>
             </div>
         </div>
     </div>
@@ -226,12 +275,23 @@
         </div>
     </div>
 
+
+
+    <!-- 通知モーダル -->
+    <div id="notification-modal" class="modal-overlay hidden">
+        <div class="notification-content">
+            <h3 id="notification-title"></h3>
+            <p id="notification-message"></p>
+            <button id="notification-close-button">OK</button>
+        </div>
+    </div>
+
     <div id="progress-container" class="hidden">
         <div id="progress-bar"></div>
         <div id="progress-label">
             <span id="progress-message">Initializing...</span>
             <span id="progress-percentage">(0%)</span>
     </div>
-    <script type="module" src="script.js"></script>
+            <script type="module" src="script.js"></script>
 </body>
 </html>
