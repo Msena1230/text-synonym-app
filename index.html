@@ -56,6 +56,9 @@
         </div>
     </div>
     <div class="header-icons">
+        <div id="favorite-list-button" class="header-icon" title="Favorites">
+            <i class="fas fa-heart"></i>
+        </div>
         <div id="bookmark-list-button" class="header-icon" title="Bookmarks">
             <i class="fas fa-bookmark"></i>
         </div>
@@ -72,6 +75,9 @@
                 <button id="clear-history-button" title="Clear all history">
                     <i class="fas fa-trash-alt"></i>
                 </button>
+            </div>
+            <div style="padding: 0 15px 10px 15px;">
+                <input type="text" id="history-search" placeholder="Search history..." style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 16px; border: 1px solid #dfe1e5; font-size: 0.9em;">
             </div>
             <div id="history-list">
                 <p class="placeholder">Your history will appear here.</p>
@@ -150,6 +156,20 @@
 
             <div class="setting-section-divider"></div>
 
+            <div class="accent-color-container">
+                <h3>Accent Color</h3>
+                <div class="accent-color-options">
+                    <button class="accent-color-button" data-color="#4a89dc" style="background-color: #4a89dc; width: 30px; height: 30px;"></button>
+                    <button class="accent-color-button" data-color="#e57373" style="background-color: #e57373; width: 30px; height: 30px;"></button>
+                    <button class="accent-color-button" data-color="#81c784" style="background-color: #81c784; width: 30px; height: 30px;"></button>
+                    <button class="accent-color-button" data-color="#ffb74d" style="background-color: #ffb74d; width: 30px; height: 30px;"></button>
+                    <button class="accent-color-button" data-color="#ba68c8" style="background-color: #ba68c8; width: 30px; height: 30px;"></button>
+                    <button class="accent-color-button" data-color="#7986cb" style="background-color: #7986cb; width: 30px; height: 30px;"></button>
+                </div>
+            </div>
+
+            <div class="setting-section-divider"></div>
+
             <div class="layout-mode-container">
                 <h3>Layout Mode</h3>
                 <p>Switch to a single-column layout suitable for narrow screens.</p>
@@ -179,6 +199,22 @@
                     <button class="theme-preview-button" data-theme="glass">
                         <div class="theme-preview glass-preview"></div>
                         <span>Glass Theme</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="solarized-dark">
+                        <div class="theme-preview solarized-dark-preview"></div>
+                        <span>Solarized Dark</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="solarized-light">
+                        <div class="theme-preview solarized-light-preview"></div>
+                        <span>Solarized Light</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="gruvbox">
+                        <div class="theme-preview gruvbox-preview"></div>
+                        <span>Gruvbox</span>
+                    </button>
+                    <button class="theme-preview-button" data-theme="dracula">
+                        <div class="theme-preview dracula-preview"></div>
+                        <span>Dracula</span>
                     </button>
                 </div>
             </div>
@@ -219,6 +255,18 @@
 
             <div class="setting-section-divider"></div>
 
+            <div class="typing-sound-container">
+                <h3>Typing Sound</h3>
+                <p>Get audible feedback as you type.</p>
+                <select id="typing-sound-select">
+                    <option value="none">None</option>
+                    <option value="click">Click</option>
+                    <option value="typewriter">Typewriter</option>
+                </select>
+            </div>
+
+            <div class="setting-section-divider"></div>
+
             <div class="setting-section-divider"></div>
 
             <div class="setting-section-divider"></div>
@@ -237,6 +285,7 @@
                 <h4>Developer Memo</h4>
                 <textarea id="dev-memo-pad" placeholder="Your notes here..." readonly></textarea>
             </div>
+
         </div>
     </div>
 
@@ -245,10 +294,30 @@
         <div class="modal-content">
             <button id="close-bookmark-modal" class="close-button">&times;</button>
             <h2>Bookmarked Words</h2>
+            <div style="display: flex; align-items: center; background-color: #f1f3f4; border-radius: 20px; padding: 8px 12px; margin-bottom: 10px;">
+                <i class="fas fa-search" style="color: #5f6368; margin-right: 8px;"></i>
+                <input type="text" id="bookmark-search" placeholder="Search bookmarks..." style="border: none; outline: none; background: transparent; width: 100%; font-size: 1em; color: #202124;">
+            </div>
             <div id="bookmark-list">
                 <!-- ブックマークされた単語がここに表示されます -->
             </div>
             <button id="start-flashcards-button" class="save-button">Start Flashcard Quiz</button>
+        </div>
+    </div>
+
+    <!-- お気に入りモーダル -->
+    <div id="favorite-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-favorite-modal" class="close-button">&times;</button>
+            <h2>Favorited Words</h2>
+            <div style="display: flex; align-items: center; background-color: #f1f3f4; border-radius: 20px; padding: 8px 12px; margin-bottom: 10px;">
+                <i class="fas fa-search" style="color: #5f6368; margin-right: 8px;"></i>
+                <input type="text" id="favorite-search" placeholder="Search favorites..." style="border: none; outline: none; background: transparent; width: 100%; font-size: 1em; color: #202124;">
+            </div>
+            <div id="favorite-list">
+                <!-- お気に入りの単語がここに表示されます -->
+            </div>
+            <button id="start-favorite-flashcards-button" class="save-button">Start Favorite Flashcard Quiz</button>
         </div>
     </div>
 
@@ -292,6 +361,39 @@
             <span id="progress-message">Initializing...</span>
             <span id="progress-percentage">(0%)</span>
     </div>
+
+    <!-- New Memo Modal -->
+    <div id="new-memo-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-new-memo-modal" class="close-button">&times;</button>
+            <h3>Create New Developer Memo</h3>
+            <div class="api-key-input-container">
+                <label for="new-memo-name">Memo Name:</label>
+                <input type="text" id="new-memo-name" placeholder="Enter a name for the memo">
+            </div>
+            <div class="api-key-input-container">
+                <label for="new-memo-password">Password:</label>
+                <input type="password" id="new-memo-password" placeholder="Enter a password for this memo">
+            </div>
+            <button id="save-new-memo-btn" class="save-button">Save Memo</button>
+            <div id="new-memo-feedback" class="save-feedback"></div>
+        </div>
+    </div>
+
+    <!-- Unlock Memo Modal -->
+    <div id="unlock-memo-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-unlock-memo-modal" class="close-button">&times;</button>
+            <h3 id="unlock-memo-title">Unlock Memo</h3>
+            <div class="api-key-input-container">
+                <label for="unlock-memo-password">Password:</label>
+                <input type="password" id="unlock-memo-password" placeholder="Enter password">
+            </div>
+            <button id="unlock-memo-btn" class="save-button">Unlock</button>
+            <div id="unlock-memo-feedback" class="save-feedback"></div>
+        </div>
+    </div>
+
             <script type="module" src="script.js"></script>
 </body>
 </html>

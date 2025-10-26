@@ -12,6 +12,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // --- Helper to disable transitions during content swap ---
+    const style = document.createElement('style');
+    style.textContent = '.no-transition { transition: none !important; }\n' +
+    '.skeleton-card { background-color: #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; overflow: hidden; }\n' +
+    '.skeleton-title { height: 20px; width: 60%; background-color: #c7c7c7; border-radius: 4px; margin-bottom: 10px; }\n' +
+    '.skeleton-text { height: 15px; width: 90%; background-color: #c7c7c7; border-radius: 4px; margin-bottom: 8px; }\n' +
+    '.skeleton-text.short { width: 40%; }\n' +
+    '.shimmer::after { content: \'\'; position: absolute; top: 0; left: -150%; width: 150%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer-animation 1.5s infinite; }\n' +
+    '@keyframes shimmer-animation { 100% { left: 150%; } }\n' +
+    /* Solarized Dark Theme */
+    '.solarized-dark-preview { background-color: #002b36; border: 1px solid #586e75; }\n' +
+    '.solarized-dark-theme { --bg-color: #002b36; --text-color: #839496; --panel-bg-color: #073642; --border-color: #586e75; --header-text-color: #93a1a1; --button-text-color: #fdf6e3; --secondary-button-bg-color: #586e75; --secondary-button-text-color: #fdf6e3; --highlight-color: #2aa198; --modified-color: #b58900; --placeholder-color: #586e75; background-color: var(--bg-color); color: var(--text-color); }\n' +
+    '.solarized-dark-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
+    '.solarized-dark-theme h2, .solarized-dark-theme h3, .solarized-dark-theme h4 { color: var(--header-text-color); }\n' +
+    '.solarized-dark-theme button, .solarized-dark-theme .save-button { background-color: var(--accent-color); color: var(--button-text-color); border: none; }\n' +
+    '.solarized-dark-theme button:hover { filter: brightness(1.2); }\n' +
+    '.solarized-dark-theme .secondary-button { background-color: var(--secondary-button-bg-color); color: var(--secondary-button-text-color); }\n' +
+    '.solarized-dark-theme .model-select-button.selected { background-color: var(--accent-color); color: var(--button-text-color); }\n' +
+    '.solarized-dark-theme .theme-preview-button.selected { box-shadow: 0 0 0 2px var(--accent-color); }\n' +
+    '.solarized-dark-theme .theme-preview-button.selected span { color: var(--header-text-color); }\n' +
+    '.solarized-dark-theme .modal-content { background-color: var(--panel-bg-color); color: var(--text-color); }\n' +
+    '.solarized-dark-theme textarea, .solarized-dark-theme #processed-text { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }\n' +
+    '.solarized-dark-theme .replaceable { border-bottom: 2px dotted var(--highlight-color); }\n' +
+    '.solarized-dark-theme .replaceable.modified { border-bottom: 2px solid var(--modified-color); color: var(--modified-color); }\n' +
+    '.solarized-dark-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
+    '.solarized-dark-theme #login-button { background-color: #dc322f; color: #fff; }\n' +
+
+    /* Solarized Light Theme */
+    '.solarized-light-preview { background-color: #fdf6e3; border: 1px solid #93a1a1; }\n' +
+    '.solarized-light-theme { --bg-color: #fdf6e3; --text-color: #657b83; --panel-bg-color: #eee8d5; --border-color: #93a1a1; --header-text-color: #586e75; --button-text-color: #fdf6e3; --secondary-button-bg-color: #eee8d5; --secondary-button-text-color: #657b83; --highlight-color: #2aa198; --modified-color: #b58900; --placeholder-color: #93a1a1; background-color: var(--bg-color); color: var(--text-color); }\n' +
+    '.solarized-light-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
+    '.solarized-light-theme h2, .solarized-light-theme h3, .solarized-light-theme h4 { color: var(--header-text-color); }\n' +
+    '.solarized-light-theme button, .solarized-light-theme .save-button { background-color: var(--accent-color); color: var(--button-text-color); border: none; }\n' +
+    '.solarized-light-theme button:hover { filter: brightness(1.1); }\n' +
+    '.solarized-light-theme .secondary-button { background-color: var(--secondary-button-bg-color); color: var(--secondary-button-text-color); border: 1px solid var(--border-color); }\n' +
+    '.solarized-light-theme .model-select-button.selected { background-color: var(--accent-color); color: var(--button-text-color); }\n' +
+    '.solarized-light-theme .theme-preview-button.selected { box-shadow: 0 0 0 2px var(--accent-color); }\n' +
+    '.solarized-light-theme .theme-preview-button.selected span { color: var(--header-text-color); }\n' +
+    '.solarized-light-theme .modal-content { background-color: var(--panel-bg-color); color: var(--text-color); }\n' +
+    '.solarized-light-theme textarea, .solarized-light-theme #processed-text { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }\n' +
+    '.solarized-light-theme .replaceable { border-bottom: 2px dotted var(--highlight-color); }\n' +
+    '.solarized-light-theme .replaceable.modified { border-bottom: 2px solid var(--modified-color); color: var(--modified-color); }\n' +
+    '.solarized-light-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
+    '.solarized-light-theme #login-button { background-color: #dc322f; color: #fff; }\n' +
+
+    /* Gruvbox Theme */
+    '.gruvbox-preview { background-color: #282828; border: 1px solid #928374; }\n' +
+    '.gruvbox-theme { --bg-color: #282828; --text-color: #ebdbb2; --panel-bg-color: #3c3836; --border-color: #928374; --header-text-color: #ebdbb2; --button-text-color: #ebdbb2; --secondary-button-bg-color: #504945; --secondary-button-text-color: #ebdbb2; --highlight-color: #83a598; --modified-color: #fabd2f; --placeholder-color: #928374; background-color: var(--bg-color); color: var(--text-color); }\n' +
+    '.gruvbox-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
+    '.gruvbox-theme h2, .gruvbox-theme h3, .gruvbox-theme h4 { color: var(--header-text-color); }\n' +
+    '.gruvbox-theme button, .gruvbox-theme .save-button { background-color: var(--accent-color); color: var(--button-text-color); border: none; }\n' +
+    '.gruvbox-theme button:hover { filter: brightness(1.2); }\n' +
+    '.gruvbox-theme .secondary-button { background-color: var(--secondary-button-bg-color); color: var(--secondary-button-text-color); }\n' +
+    '.gruvbox-theme .model-select-button.selected { background-color: var(--accent-color); color: var(--button-text-color); }\n' +
+    '.gruvbox-theme .theme-preview-button.selected { box-shadow: 0 0 0 2px var(--accent-color); }\n' +
+    '.gruvbox-theme .theme-preview-button.selected span { color: var(--header-text-color); }\n' +
+    '.gruvbox-theme .modal-content { background-color: var(--panel-bg-color); color: var(--text-color); }\n' +
+    '.gruvbox-theme textarea, .gruvbox-theme #processed-text { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }\n' +
+    '.gruvbox-theme .replaceable { border-bottom: 2px dotted var(--highlight-color); }\n' +
+    '.gruvbox-theme .replaceable.modified { border-bottom: 2px solid var(--modified-color); color: var(--modified-color); }\n' +
+    '.gruvbox-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
+    '.gruvbox-theme #login-button { background-color: #D65D0E; color: #fff; }\n' +
+
+    /* Dracula Theme */
+    '.dracula-preview { background-color: #282a36; border: 1px solid #6272a4; }\n' +
+    '.dracula-theme { --bg-color: #282a36; --text-color: #f8f8f2; --panel-bg-color: #44475a; --border-color: #6272a4; --header-text-color: #f8f8f2; --button-text-color: #f8f8f2; --secondary-button-bg-color: #6272a4; --secondary-button-text-color: #f8f8f2; --highlight-color: #50fa7b; --modified-color: #ffb86c; --placeholder-color: #6272a4; background-color: var(--bg-color); color: var(--text-color); }\n' +
+    '.dracula-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
+    '.dracula-theme h2, .dracula-theme h3, .dracula-theme h4 { color: var(--header-text-color); }\n' +
+    '.dracula-theme button, .dracula-theme .save-button { background-color: var(--accent-color); color: var(--button-text-color); border: none; }\n' +
+    '.dracula-theme button:hover { filter: brightness(1.2); }\n' +
+    '.dracula-theme .secondary-button { background-color: var(--secondary-button-bg-color); color: var(--secondary-button-text-color); }\n' +
+    '.dracula-theme .model-select-button.selected { background-color: var(--accent-color); color: var(--button-text-color); }\n' +
+    '.dracula-theme .theme-preview-button.selected { box-shadow: 0 0 0 2px var(--accent-color); }\n' +
+    '.dracula-theme .theme-preview-button.selected span { color: var(--header-text-color); }\n' +
+    '.dracula-theme .modal-content { background-color: var(--panel-bg-color); color: var(--text-color); }\n' +
+    '.dracula-theme textarea, .dracula-theme #processed-text { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }\n' +
+    '.dracula-theme .replaceable { border-bottom: 2px dotted var(--highlight-color); }\n' +
+    '.dracula-theme .replaceable.modified { border-bottom: 2px solid var(--modified-color); color: var(--modified-color); }\n' +
+    '.dracula-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
+    '.dracula-theme #login-button { background-color: #ff79c6; color: #fff; }\n';
+    document.head.append(style);
+
 
     // --- Splash Screen Logic ---
     const splashScreen = document.getElementById('splash-screen');
@@ -54,14 +136,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveSaplingApiKeyButton = document.getElementById('save-sapling-api-key');
     const saveSaplingApiKeyFeedback = document.getElementById('save-sapling-api-key-feedback');
     const themePreviewButtons = document.querySelectorAll('.theme-preview-button');
+    const accentColorButtons = document.querySelectorAll('.accent-color-button');
     const modelSelectButtons = document.querySelectorAll('.model-select-button');
     const layoutModeToggle = document.getElementById('layout-mode-toggle');
     const translationLanguageSelect = document.getElementById('translation-language-select');
+    const typingSoundSelect = document.getElementById('typing-sound-select');
     const bookmarkListButton = document.getElementById('bookmark-list-button');
     const bookmarkModal = document.getElementById('bookmark-modal');
     const closeBookmarkModalButton = document.getElementById('close-bookmark-modal');
     const bookmarkList = document.getElementById('bookmark-list');
     const startFlashcardsButton = document.getElementById('start-flashcards-button');
+
+    // --- New Favorites Elements ---
+    const favoriteListButton = document.getElementById('favorite-list-button');
+    const favoriteModal = document.getElementById('favorite-modal');
+    const closeFavoriteModalButton = document.getElementById('close-favorite-modal');
+    const favoriteList = document.getElementById('favorite-list');
+    const startFavoriteFlashcardsButton = document.getElementById('start-favorite-flashcards-button');
+
+    // --- Search Inputs ---
+    const historySearchInput = document.getElementById('history-search');
+    const bookmarkSearchInput = document.getElementById('bookmark-search');
+    const favoriteSearchInput = document.getElementById('favorite-search');
+
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
     const progressMessage = document.getElementById('progress-message');
@@ -83,6 +180,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const devMemoPad = document.getElementById('dev-memo-pad');
 
 
+    // --- Plain Text Paste Logic ---
+    const handlePaste = (e) => {
+        // Stop the default paste action, which might include rich text
+        e.preventDefault();
+
+        // Get the pasted data as plain text
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+
+        // Insert the plain text into the document. This works for both textarea and contenteditable divs.
+        document.execCommand('insertText', false, text);
+        
+        // For the textarea, we need to manually trigger the 'input' event
+        // so that the word counter updates.
+        if (e.target.id === 'text-input') {
+            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    };
+
+    textInput.addEventListener('paste', handlePaste);
+    processedText.addEventListener('paste', handlePaste);
+
+    // --- Event Delegation for replaceable words ---
+    processedText.addEventListener('click', (e) => {
+        if (e.target && e.target.matches('span.replaceable')) {
+            const span = e.target;
+            const wordId = span.id;
+            const groupId = 'group-' + wordId.split('-')[1];
+            const groupElement = document.getElementById(groupId);
+
+            if (groupElement) {
+                groupElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                groupElement.classList.add('scrolled-highlight');
+                setTimeout(() => groupElement.classList.remove('scrolled-highlight'), 3500);
+            }
+        }
+    });
 
 
     let geminiApiKey = '';
@@ -95,6 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let progressIntervalId = null;
     let selectedModel = 'gemini-2.5-flash-lite';
     let selectedTranslationLanguage = 'Japanese';
+    let selectedAccentColor = '#4a89dc';
+    let selectedTypingSound = 'none';
+
+    // --- Typing Sound Assets ---
+    const typingSounds = {
+        click: new Audio('sounds/click.mp3'),
+        typewriter: new Audio('sounds/typewriter.mp3')
+    };
 
     const loadingMessages = [
         'Working on it...', 'Analyzing your text...', 'Asking the AI for suggestions!',
@@ -163,12 +304,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const localBookmarks = JSON.parse(localStorage.getItem('bookmarkedWords') || '[]');
             saveBookmarks(localBookmarks, false);
+
+            const localFavorites = JSON.parse(localStorage.getItem('favoritedWords') || '[]');
+            saveFavorites(localFavorites, false);
             
             loadTheme();
             loadLayoutMode();
             loadModel();
             loadTranslationLanguage();
             loadSaplingApiKey();
+            loadAccentColor();
+            loadTypingSound();
         }
     });
 
@@ -180,18 +326,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = docSnap.data();
                 history = data.history || [];
                 saveBookmarks(data.bookmarks || [], false);
+                saveFavorites(data.favorites || [], false); // Load favorites from Firestore
                 const userSettings = data.settings || {};
                 applyTheme(userSettings.theme || 'light');
                 applyLayoutMode(userSettings.layoutMode || false);
                 selectedModel = userSettings.selectedModel || 'gemini-2.5-flash-lite';
                 selectedTranslationLanguage = userSettings.translationLanguage || 'Japanese';
                 saplingApiKey = userSettings.saplingApiKey || '';
+                geminiApiKey = userSettings.geminiApiKey || '';
+                selectedAccentColor = userSettings.accentColor || '#4a89dc';
+                selectedTypingSound = userSettings.typingSound || 'none';
                 updateSelectedThemeButton(userSettings.theme || 'light');
                 updateSelectedModelButton();
+                updateSelectedAccentColorButton();
                 translationLanguageSelect.value = selectedTranslationLanguage;
+                typingSoundSelect.value = selectedTypingSound;
                 saplingApiKeyInput.value = saplingApiKey;
-                geminiApiKey = userSettings.geminiApiKey || '';
                 apiKeyInput.value = geminiApiKey;
+                applyAccentColor(selectedAccentColor);
+
+                // Sync Firestore settings to localStorage to prevent overwrites
+                localStorage.setItem('theme', userSettings.theme || 'light');
+                localStorage.setItem('layoutMode', userSettings.layoutMode || false);
+                localStorage.setItem('ai_humanizer_selected_model', selectedModel);
+                localStorage.setItem('translationLanguage', selectedTranslationLanguage);
+                localStorage.setItem('saplingApiKey', saplingApiKey);
+                localStorage.setItem('geminiApiKey', geminiApiKey);
+                localStorage.setItem('accentColor', selectedAccentColor);
+                localStorage.setItem('typingSound', selectedTypingSound);
+
             } else {
                 console.log("Creating new user document in Firestore.");
                 saveUserData();
@@ -211,13 +374,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataToSave = {
             history: history,
             bookmarks: getBookmarks(),
+            favorites: getFavorites(), // Add favorites to user data
             settings: {
-                theme: localStorage.getItem('theme') || 'light',
-                layoutMode: localStorage.getItem('layoutMode') === 'true',
-                selectedModel: localStorage.getItem('ai_humanizer_selected_model') || 'gemini-2.5-flash-lite',
-                translationLanguage: localStorage.getItem('translationLanguage') || 'Japanese',
-                saplingApiKey: localStorage.getItem('saplingApiKey') || '',
-                geminiApiKey: localStorage.getItem('geminiApiKey') || ''
+                theme: document.body.classList.contains('dark-theme') ? 'dark' : (document.body.classList.contains('nord-theme') ? 'nord' : (document.body.classList.contains('glass-theme') ? 'glass' : 'light')),
+                layoutMode: layoutModeToggle.checked,
+                selectedModel: selectedModel,
+                translationLanguage: selectedTranslationLanguage,
+                saplingApiKey: saplingApiKey,
+                geminiApiKey: geminiApiKey,
+                accentColor: selectedAccentColor,
+                typingSound: selectedTypingSound
             }
         };
         try {
@@ -268,13 +434,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // historyList.innerHTML = '<p class="placeholder">Please log in to use the history feature.</p>';
             // return;
         }
+
+        const searchTerm = historySearchInput.value.toLowerCase();
+        const filteredHistory = history.filter(item => {
+            const title = item.customTitle || item.text;
+            return title.toLowerCase().includes(searchTerm);
+        });
+
         historyList.innerHTML = '';
-        if (history.length === 0) {
-            historyList.innerHTML = `<p class="placeholder">Your history will appear here.</p>`;
+        if (filteredHistory.length === 0) {
+            historyList.innerHTML = `<p class="placeholder">No history items match your search.</p>`;
             return;
         }
+
         const groupedHistory = { Today: [], Yesterday: [], 'This Week': [], 'This Month': [], Older: [] };
-        history.forEach(item => {
+        filteredHistory.forEach(item => {
             const group = getHistoryGroup(item.id);
             groupedHistory[group].push(item);
         });
@@ -444,20 +618,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderBookmarks() {
         const bookmarks = getBookmarks();
+        const searchTerm = bookmarkSearchInput.value.toLowerCase();
+
+        const filteredBookmarks = bookmarks.filter(bookmark => {
+            const word = bookmark.originalWord.toLowerCase();
+            const meaning = (bookmark.meaning || bookmark.translation || '').toLowerCase();
+            const context = (bookmark.context_phrase || '').toLowerCase();
+            return word.includes(searchTerm) || meaning.includes(searchTerm) || context.includes(searchTerm);
+        });
+
         bookmarkList.innerHTML = '';
-        if (bookmarks.length === 0) {
-            bookmarkList.innerHTML = '<p class="placeholder">No words bookmarked yet.</p>';
+        if (filteredBookmarks.length === 0) {
+            bookmarkList.innerHTML = '<p class="placeholder">No bookmarked words match your search.</p>';
             startFlashcardsButton.style.display = 'none';
             return;
         }
         startFlashcardsButton.style.display = 'block';
-        bookmarks.forEach(bookmark => {
+        filteredBookmarks.forEach(bookmark => {
             const item = document.createElement('div');
             item.className = 'bookmark-item';
             const synonymsHTML = bookmark.synonyms.map(s => `<li>${s.word} <span class="translation">(${s.translation})</span></li>`).join('');
             item.innerHTML = `
                 <div class="bookmark-item-content">
                     <div class="original">${bookmark.originalWord} <span class="pos">(${bookmark.pos})</span><span class="translation">(${bookmark.meaning || bookmark.translation || ''})</span></div>
+                    <p class="item-context">...${bookmark.context_phrase}...</p>
                     <ul class="bookmark-synonyms">${synonymsHTML}</ul>
                 </div>
                 <button class="remove-bookmark-btn" data-word="${bookmark.originalWord}" data-context="${bookmark.context_phrase}"><i class="fas fa-trash-alt"></i></button>
@@ -471,6 +655,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 let currentBookmarks = getBookmarks();
                 currentBookmarks = currentBookmarks.filter(b => !(b.originalWord === wordToRemove && b.context_phrase === contextToRemove));
                 saveBookmarks(currentBookmarks);
+            });
+        });
+    }
+
+    // --- Favorites Logic ---
+    const getFavorites = () => JSON.parse(localStorage.getItem('favoritedWords') || '[]');
+
+    const saveFavorites = (favorites, doSaveUser = true) => {
+        localStorage.setItem('favoritedWords', JSON.stringify(favorites));
+        startFavoriteFlashcardsButton.style.display = favorites.length > 0 ? 'block' : 'none';
+        renderFavorites();
+        if(doSaveUser) saveUserData();
+    };
+
+    function renderFavorites() {
+        const favorites = getFavorites();
+        const searchTerm = favoriteSearchInput.value.toLowerCase();
+
+        const filteredFavorites = favorites.filter(favorite => {
+            const word = favorite.originalWord.toLowerCase();
+            const meaning = (favorite.meaning || favorite.translation || '').toLowerCase();
+            const context = (favorite.context_phrase || '').toLowerCase();
+            return word.includes(searchTerm) || meaning.includes(searchTerm) || context.includes(searchTerm);
+        });
+
+        favoriteList.innerHTML = '';
+        if (filteredFavorites.length === 0) {
+            favoriteList.innerHTML = '<p class="placeholder">No favorited words match your search.</p>';
+            startFavoriteFlashcardsButton.style.display = 'none';
+            return;
+        }
+        startFavoriteFlashcardsButton.style.display = 'block';
+        filteredFavorites.forEach(favorite => {
+            const item = document.createElement('div');
+            item.className = 'bookmark-item'; // Using same style as bookmarks
+            const synonymsHTML = favorite.synonyms.map(s => `<li>${s.word} <span class="translation">(${s.translation})</span></li>`).join('');
+            item.innerHTML = `
+                <div class="bookmark-item-content">
+                    <div class="original">${favorite.originalWord} <span class="pos">(${favorite.pos})</span><span class="translation">(${favorite.meaning || favorite.translation || ''})</span></div>
+                    <p class="item-context">...${favorite.context_phrase}...</p>
+                    <ul class="bookmark-synonyms">${synonymsHTML}</ul>
+                </div>
+                <button class="remove-bookmark-btn" data-word="${favorite.originalWord}" data-context="${favorite.context_phrase}"><i class="fas fa-trash-alt"></i></button>
+            `;
+            favoriteList.appendChild(item);
+        });
+        // Note: We use a more specific selector to avoid conflicts with the bookmark list handler
+        favoriteList.querySelectorAll('.remove-bookmark-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const wordToRemove = e.currentTarget.dataset.word;
+                const contextToRemove = e.currentTarget.dataset.context;
+                let currentFavorites = getFavorites();
+                currentFavorites = currentFavorites.filter(f => !(f.originalWord === wordToRemove && f.context_phrase === contextToRemove));
+                saveFavorites(currentFavorites);
             });
         });
     }
@@ -493,18 +731,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const completeFlashcardButton = document.getElementById('complete-flashcard-button');
     const flashcardProgress = document.getElementById('flashcard-progress');
     let flashcardQuiz = [];
-    let currentFlashcardIndex = 0;
+    let touchStartX = 0;
 
-    const openFlashcardModal = () => {
-        const bookmarks = getBookmarks();
-        if (bookmarks.length === 0) {
-            alert('You have no bookmarked words to quiz!');
+    flashcard.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    flashcard.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const swipeThreshold = 50; // Minimum distance for a swipe
+        if (touchStartX - touchEndX > swipeThreshold) {
+            // Swiped left
+            nextFlashcardButton.click();
+        } else if (touchEndX - touchStartX > swipeThreshold) {
+            // Swiped right
+            prevFlashcardButton.click();
+        }
+    });
+
+
+    let currentFlashcardIndex = 0;
+    let currentFlashcardSource = null; // 'bookmarks' or 'favorites'
+
+    const openFlashcardModal = (wordSource) => {
+        currentFlashcardSource = wordSource;
+        const words = (wordSource === 'bookmarks') ? getBookmarks() : getFavorites();
+
+        if (words.length === 0) {
+            alert(`You have no words in your ${wordSource} to quiz!`);
             return;
         }
-        flashcardQuiz = shuffleArray([...bookmarks]);
+        flashcardQuiz = shuffleArray([...words]);
         currentFlashcardIndex = 0;
         renderCurrentFlashcard();
-        closeBookmarkModal();
+        
+        if (wordSource === 'bookmarks') {
+            closeBookmarkModal();
+        } else {
+            closeFavoriteModal();
+        }
         flashcardModal.classList.remove('hidden');
     };
 
@@ -526,6 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
         flashcardBack.innerHTML = `
             <div class="flashcard-back-content">
                 <div class="original">${cardData.originalWord} <span class="pos">(${cardData.pos})</span><span class="translation">(${cardData.meaning || cardData.translation || ''})</span></div>
+                <p class="item-context">...${cardData.context_phrase}...</p>
                 <ul class="bookmark-synonyms">${synonymsHTML}</ul>
             </div>
         `;
@@ -536,9 +802,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flashcardQuiz.length === 0) return;
         const wordToDelete = flashcardQuiz[currentFlashcardIndex].originalWord;
         const contextToDelete = flashcardQuiz[currentFlashcardIndex].context_phrase;
-        let currentBookmarks = getBookmarks();
-        currentBookmarks = currentBookmarks.filter(b => !(b.originalWord === wordToDelete && b.context_phrase === contextToDelete));
-        saveBookmarks(currentBookmarks);
+        
+        let currentWords = (currentFlashcardSource === 'bookmarks') ? getBookmarks() : getFavorites();
+        currentWords = currentWords.filter(b => !(b.originalWord === wordToDelete && b.context_phrase === contextToDelete));
+        
+        if (currentFlashcardSource === 'bookmarks') {
+            saveBookmarks(currentWords);
+        } else {
+            saveFavorites(currentWords);
+        }
+
         flashcardQuiz.splice(currentFlashcardIndex, 1);
         if (currentFlashcardIndex >= flashcardQuiz.length) {
             currentFlashcardIndex = flashcardQuiz.length - 1;
@@ -546,26 +819,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flashcardQuiz.length === 0) {
             alert('Quiz complete! Well done!');
             closeFlashcardModal();
-            renderBookmarks();
+            // No need to call renderBookmarks/renderFavorites here as they are called by saveBookmarks/saveFavorites
             return;
         }
         renderCurrentFlashcard();
-        renderBookmarks();
     };
 
-    startFlashcardsButton.addEventListener('click', openFlashcardModal);
+    startFlashcardsButton.addEventListener('click', () => openFlashcardModal('bookmarks'));
+    startFavoriteFlashcardsButton.addEventListener('click', () => openFlashcardModal('favorites'));
+
     closeFlashcardModalButton.addEventListener('click', closeFlashcardModal);
     flashcard.addEventListener('click', () => flashcard.classList.toggle('is-flipped'));
     nextFlashcardButton.addEventListener('click', () => {
         if (currentFlashcardIndex < flashcardQuiz.length - 1) {
+            flashcard.classList.add('no-transition');
+            flashcard.classList.remove('is-flipped');
+            // Force reflow
+            void flashcard.offsetHeight;
+
             currentFlashcardIndex++;
             renderCurrentFlashcard();
+            flashcard.classList.remove('no-transition');
         }
     });
     prevFlashcardButton.addEventListener('click', () => {
         if (currentFlashcardIndex > 0) {
+            flashcard.classList.add('no-transition');
+            flashcard.classList.remove('is-flipped');
+            // Force reflow
+            void flashcard.offsetHeight;
+
             currentFlashcardIndex--;
             renderCurrentFlashcard();
+            flashcard.classList.remove('no-transition');
         }
     });
     completeFlashcardButton.addEventListener('click', deleteCurrentFlashcardAndAdvance);
@@ -595,22 +881,50 @@ document.addEventListener('DOMContentLoaded', () => {
         devLoginFeedback.classList.remove('visible');
         isDevLoggedIn = false;
         devAccessLevel = null;
+        currentMemoDocRef = null;
         devMemoPad.value = '';
         devMemoPad.setAttribute('readonly', true);
     };
     const openBookmarkModal = () => { renderBookmarks(); bookmarkModal.classList.remove('hidden'); };
     const closeBookmarkModal = () => bookmarkModal.classList.add('hidden');
+    const openFavoriteModal = () => { renderFavorites(); favoriteModal.classList.remove('hidden'); };
+    const closeFavoriteModal = () => favoriteModal.classList.add('hidden');
+
     settingsButton.addEventListener('click', openSettingsModal);
     closeSettingsModalButton.addEventListener('click', closeSettingsModal);
     settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     bookmarkListButton.addEventListener('click', openBookmarkModal);
     closeBookmarkModalButton.addEventListener('click', closeBookmarkModal);
     bookmarkModal.addEventListener('click', (e) => { if (e.target === bookmarkModal) closeBookmarkModal(); });
+    favoriteListButton.addEventListener('click', openFavoriteModal);
+    closeFavoriteModalButton.addEventListener('click', closeFavoriteModal);
+    favoriteModal.addEventListener('click', (e) => { if (e.target === favoriteModal) closeFavoriteModal(); });
+
+    // --- Search Event Listeners ---
+    historySearchInput.addEventListener('input', renderHistory);
+    bookmarkSearchInput.addEventListener('input', renderBookmarks);
+    favoriteSearchInput.addEventListener('input', renderFavorites);
 
     // --- Word Counter & Clear ---
     textInput.addEventListener('input', () => {
         const wordCount = textInput.value.trim().split(/\s+/).filter(Boolean).length;
         wordCounter.textContent = `${wordCount} words`;
+    });
+
+    textInput.addEventListener('keydown', () => {
+        if (selectedTypingSound !== 'none' && typingSounds[selectedTypingSound]) {
+            const sound = typingSounds[selectedTypingSound];
+            sound.currentTime = 0; // Allow for rapid key presses
+            sound.play().catch(error => console.error("Typing sound playback error:", error));
+        }
+    });
+
+    textInput.addEventListener('keydown', () => {
+        if (selectedTypingSound !== 'none' && typingSounds[selectedTypingSound]) {
+            const sound = typingSounds[selectedTypingSound];
+            sound.currentTime = 0; // Allow for rapid key presses
+            sound.play().catch(error => console.error("Typing sound playback error:", error));
+        }
     });
 
 
@@ -696,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     textInput.style.zIndex = 1;
                     processedText.style.zIndex = -1;
                 }
-            }, 10000); // 10 seconds
+            }, 5000); // 5 seconds
         } else {
             showNotification('AI Detection Result', `AI Detection Score: ${scorePercentage}% AI-generated.`);
         }
@@ -714,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Theme Switcher Logic ---
     function applyTheme(themeName) {
-        const themeClasses = ['light-theme', 'dark-theme', 'nord-theme', 'glass-theme'];
+        const themeClasses = ['light-theme', 'dark-theme', 'nord-theme', 'glass-theme', 'solarized-dark-theme', 'solarized-light-theme', 'gruvbox-theme', 'dracula-theme'];
         document.body.classList.remove('light-mode', ...themeClasses);
 
         if (themeName && themeName !== 'light') {
@@ -756,6 +1070,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Accent Color Logic ---
+    function hexToRgb(hex) {
+        let r = 0, g = 0, b = 0;
+        // 3 digits
+        if (hex.length == 4) {
+            r = "0x" + hex[1] + hex[1];
+            g = "0x" + hex[2] + hex[2];
+            b = "0x" + hex[3] + hex[3];
+        // 6 digits
+        } else if (hex.length == 7) {
+            r = "0x" + hex[1] + hex[2];
+            g = "0x" + hex[3] + hex[4];
+            b = "0x" + hex[5] + hex[6];
+        }
+        return `${+r},${+g},${+b}`;
+    }
+
+    function applyAccentColor(color) {
+        document.documentElement.style.setProperty('--accent-color', color);
+        // Simple darken effect for the dark variant
+        const rgb = hexToRgb(color);
+        const [r, g, b] = rgb.split(',').map(Number);
+        const darkenFactor = 0.8;
+        const darkColor = `rgb(${Math.round(r * darkenFactor)}, ${Math.round(g * darkenFactor)}, ${Math.round(b * darkenFactor)})`;
+        document.documentElement.style.setProperty('--accent-color-dark', darkColor);
+        document.documentElement.style.setProperty('--accent-color-rgb', rgb);
+    }
+
+    function updateSelectedAccentColorButton() {
+        accentColorButtons.forEach(button => {
+            button.classList.toggle('selected', button.dataset.color === selectedAccentColor);
+        });
+    }
+
+    function loadAccentColor() {
+        selectedAccentColor = localStorage.getItem('accentColor') || '#4a89dc';
+        applyAccentColor(selectedAccentColor);
+        updateSelectedAccentColorButton();
+    }
+
+    accentColorButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            selectedAccentColor = e.currentTarget.dataset.color;
+            applyAccentColor(selectedAccentColor);
+            localStorage.setItem('accentColor', selectedAccentColor);
+            updateSelectedAccentColorButton();
+            saveUserData();
+        });
+    });
+
     // --- Model Selection Logic ---
     function updateSelectedModelButton() {
         modelSelectButtons.forEach(button => {
@@ -784,9 +1148,16 @@ document.addEventListener('DOMContentLoaded', () => {
         translationLanguageSelect.value = savedLanguage;
     }
 
-    translationLanguageSelect.addEventListener('change', (e) => {
-        selectedTranslationLanguage = e.target.value;
-        localStorage.setItem('translationLanguage', selectedTranslationLanguage);
+    // --- Typing Sound Logic ---
+    function loadTypingSound() {
+        const savedSound = localStorage.getItem('typingSound') || 'none';
+        selectedTypingSound = savedSound;
+        typingSoundSelect.value = savedSound;
+    }
+
+    typingSoundSelect.addEventListener('change', (e) => {
+        selectedTypingSound = e.target.value;
+        localStorage.setItem('typingSound', selectedTypingSound);
         saveUserData();
     });
 
@@ -794,8 +1165,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyLayoutMode(isVertical) {
         document.body.classList.toggle('vertical-layout', isVertical);
         layoutModeToggle.checked = isVertical;
-        localStorage.setItem('layoutMode', isVertical);
-        saveUserData();
     }
 
     function loadLayoutMode() {
@@ -815,31 +1184,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Developer Zone Logic ---
-    const devPasswords = {
-        '0fc2e3d4c35968ee6f4b627b496736dc232c9422c63ffc96118f04222c0404c1': 'readonly', // israpicodeisr
-        'a24125089ac9f110389cb6dd4b8a3195cbf12b531ceef7ad8b787e9cd372f9fb': 'readwrite' // MSena19231230
+    const devAccounts = {
+        // Set 1
+        '0fc2e3d4c35968ee6f4b627b496736dc232c9422c63ffc96118f04222c0404c1': { level: 'readonly', memoId: 'apiMemo_1' }, // israpicodeisr
+        'a24125089ac9f110389cb6dd4b8a3195cbf12b531ceef7ad8b787e9cd372f9fb': { level: 'readwrite', memoId: 'apiMemo_1' }, // MSena19231230
+        // Set 2
+        'ce82226da6a1d0120c614c88e2e1bd0df5f6adb429174893fe1adcf60afe0f09': { level: 'readonly', memoId: 'apiMemo_2' }, // isrjaps0001
+        '23323429612711146d0e8462fff979a00a24639df5e8059b322df69a6486d6b1': { level: 'readwrite', memoId: 'apiMemo_2' }, // MSena192312300001
+        // Set 3
+        '4079793e291bdaa6bc82f658d8cc838f982c435f914e61435bd02ae256689b38': { level: 'readonly', memoId: 'apiMemo_3' }, // isrjaps2000
+        'ff2ec3436c8c8fa5b7b4ab437dede17afa04f7fa0a63a8d9eee7d87b44702738': { level: 'readwrite', memoId: 'apiMemo_3' }  // MSena192312302000
     };
     let devAccessLevel = null;
-    const memoDocRef = doc(db, 'devMemos', 'apiMemo');
+    let currentMemoDocRef = null;
 
     devLoginButton.addEventListener('click', async () => {
         const password = devPasswordInput.value;
         if (!password) return;
         const inputPassHash = await sha256(password);
-        const accessLevel = devPasswords[inputPassHash];
+        const account = devAccounts[inputPassHash];
 
-        if (accessLevel) {
-            devAccessLevel = accessLevel;
+        if (account) {
+            devAccessLevel = account.level;
             isDevLoggedIn = true;
+            currentMemoDocRef = doc(db, 'devMemos', account.memoId);
 
             try {
-                const docSnap = await getDoc(memoDocRef);
+                const docSnap = await getDoc(currentMemoDocRef);
                 if (docSnap.exists()) {
                     devMemoPad.value = docSnap.data().content || '';
                 } else {
                     // If the document doesn't exist, create it with a default message
-                    await setDoc(memoDocRef, { content: 'Welcome to the developer memo. Start typing here...' });
-                    devMemoPad.value = 'Welcome to the developer memo. Start typing here...';
+                    await setDoc(currentMemoDocRef, { content: `Welcome to memo ${account.memoId}. Start typing here...` });
+                    devMemoPad.value = `Welcome to memo ${account.memoId}. Start typing here...`;
                 }
             } catch (error) {
                 console.error("Error fetching dev memo: ", error);
@@ -851,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(loginContainer) loginContainer.classList.add('hidden');
             developerMemoContainer.classList.remove('hidden');
 
-            if (accessLevel === 'readonly') {
+            if (devAccessLevel === 'readonly') {
                 devMemoPad.setAttribute('readonly', true);
             } else {
                 devMemoPad.removeAttribute('readonly');
@@ -867,15 +1244,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     devMemoPad.addEventListener('input', async () => {
-        if (devAccessLevel === 'readwrite') {
+        if (devAccessLevel === 'readwrite' && currentMemoDocRef) {
             try {
                 // Use setDoc with merge:true to avoid overwriting other fields if they exist
-                await setDoc(memoDocRef, { content: devMemoPad.value }, { merge: true });
+                await setDoc(currentMemoDocRef, { content: devMemoPad.value }, { merge: true });
             } catch (error) {
                 console.error("Error auto-saving dev memo: ", error);
             }
         }
     });
+
+
 
 
 
@@ -1102,25 +1481,6 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
                     span.id = wordId;
                     span.className = 'replaceable';
                     span.dataset.originalWord = part;
-                    span.addEventListener('click', () => { 
-                        const groupElement = document.getElementById(groupId); 
-                        groupElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-                        groupElement.classList.add('scrolled-highlight'); 
-                        setTimeout(() => groupElement.classList.remove('scrolled-highlight'), 3500); 
-                    });
-                    span.addEventListener('contextmenu', (e) => { 
-                        e.preventDefault(); 
-                        const targetSpan = e.target; 
-                        const original = targetSpan.dataset.originalWord; 
-                        if (targetSpan.textContent !== original) { 
-                            targetSpan.textContent = original; 
-                            targetSpan.classList.remove('modified'); 
-                            const groupElement = document.getElementById(groupId); 
-                            const allItems = groupElement.querySelectorAll('.synonym-item, .original-word'); 
-                            allItems.forEach(item => item.classList.remove('selected')); 
-                            groupElement.querySelector('.original-word').classList.add('selected'); 
-                        } 
-                    });
                     processedText.appendChild(span);
                     createSynonymGroup(part, data, wordId, groupId);
                 } else {
@@ -1151,25 +1511,66 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         const group = document.createElement('div');
         group.id = groupId;
         group.className = 'synonym-group';
+        group.style.position = 'relative'; // Needed for absolute positioning of children
+
         const bookmarkBtn = document.createElement('i');
         const bookmarks = getBookmarks();
         const isBookmarked = bookmarks.some(b => b.originalWord === originalWord && b.context_phrase === data.context_phrase);
-        bookmarkBtn.className = `bookmark-btn ${isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark'}`;
+        bookmarkBtn.className = `bookmark-btn fas fa-bookmark ${isBookmarked ? 'bookmarked' : ''}`;
+        bookmarkBtn.title = 'Bookmark this word';
+        // Manual absolute positioning
+        bookmarkBtn.style.position = 'absolute';
+        bookmarkBtn.style.top = '8px';
+        bookmarkBtn.style.right = '8px';
+        bookmarkBtn.style.cursor = 'pointer';
+
         bookmarkBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             let currentBookmarks = getBookmarks();
             const alreadyExistsIndex = currentBookmarks.findIndex(b => b.originalWord === originalWord && b.context_phrase === data.context_phrase);
             if (alreadyExistsIndex > -1) {
                 currentBookmarks.splice(alreadyExistsIndex, 1);
-                bookmarkBtn.className = 'bookmark-btn far fa-bookmark';
+                bookmarkBtn.classList.remove('bookmarked');
             } else {
                 const newBookmark = { originalWord, pos: data.pos, meaning: data.meaning, context_phrase: data.context_phrase, synonyms: data.synonyms };
                 currentBookmarks.push(newBookmark);
-                bookmarkBtn.className = 'bookmark-btn fas fa-bookmark';
+                bookmarkBtn.classList.add('bookmarked');
             }
             saveBookmarks(currentBookmarks);
         });
+
+        const favoriteBtn = document.createElement('i');
+        const favorites = getFavorites();
+        const isFavorited = favorites.some(f => f.originalWord === originalWord && f.context_phrase === data.context_phrase);
+        favoriteBtn.className = `favorite-btn ${isFavorited ? 'fas' : 'far'} fa-heart`;
+        favoriteBtn.title = 'Favorite this word';
+        // Manual absolute positioning to the left of the bookmark icon
+        favoriteBtn.style.position = 'absolute';
+        favoriteBtn.style.top = '8px';
+        favoriteBtn.style.right = '30px'; // Position left of the other icon
+        favoriteBtn.style.fontSize = '1.1em';
+        favoriteBtn.style.cursor = 'pointer';
+
+        favoriteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let currentFavorites = getFavorites();
+            const alreadyExistsIndex = currentFavorites.findIndex(f => f.originalWord === originalWord && f.context_phrase === data.context_phrase);
+            if (alreadyExistsIndex > -1) {
+                currentFavorites.splice(alreadyExistsIndex, 1);
+                favoriteBtn.classList.remove('fas');
+                favoriteBtn.classList.add('far');
+            } else {
+                const newFavorite = { originalWord, pos: data.pos, meaning: data.meaning, context_phrase: data.context_phrase, synonyms: data.synonyms };
+                currentFavorites.push(newFavorite);
+                favoriteBtn.classList.remove('far');
+                favoriteBtn.classList.add('fas');
+            }
+            saveFavorites(currentFavorites);
+        });
+
+        group.appendChild(favoriteBtn);
         group.appendChild(bookmarkBtn);
+
         group.addEventListener('mouseenter', () => document.getElementById(wordId).classList.add('highlight'));
         group.addEventListener('mouseleave', () => document.getElementById(wordId).classList.remove('highlight'));
         const originalWordEl = document.createElement('div');
@@ -1207,6 +1608,20 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         if (!geminiApiKey) { alert('Please set your Gemini API key in the settings first.'); openSettingsModal(); return; }
         const text = textInput.value;
         if (!text.trim()) return;
+
+        // --- Show Skeleton Loaders ---
+        synonymList.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+            const skeletonCard = document.createElement('div');
+            skeletonCard.className = 'skeleton-card shimmer';
+            skeletonCard.innerHTML = `
+                <div class="skeleton-title"></div>
+                <div class="skeleton-text"></div>
+                <div class="skeleton-text short"></div>
+            `;
+            synonymList.appendChild(skeletonCard);
+        }
+
         recordUsage();
         const roughWordCount = text.trim().split(/\s+/).length;
         const expectedTime = Math.round(15 + roughWordCount * 1.2);
@@ -1282,6 +1697,8 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
     loadModel();
     loadTranslationLanguage();
     loadSaplingApiKey();
+    loadAccentColor();
+    loadTypingSound();
     textInput.style.zIndex = 1;
     processedText.style.zIndex = -1;
 });

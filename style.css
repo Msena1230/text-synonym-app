@@ -2,6 +2,9 @@
     --primary-color: #4a89dc;
     --primary-color-dark: #3a7ac8;
     --primary-color-rgb: 74, 137, 220;
+    --accent-color: var(--primary-color); /* New Accent Color Variable */
+    --accent-color-dark: var(--primary-color-dark);
+    --accent-color-rgb: var(--primary-color-rgb);
 
     --light-bg: #f5f7fa;
     --light-panel-bg: #ffffff;
@@ -29,6 +32,7 @@
 
     --font-body: 'Roboto', 'Noto Sans JP', sans-serif;
     --transition-speed: 0.3s;
+    --transition-speed-fast: 0.2s;
     --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Nord Theme */
@@ -54,6 +58,29 @@
     --glass-primary-color: #87CEFA; /* Sky Blue */
     --glass-primary-color-dark: #6495ED; /* Cornflower Blue */
     --glass-primary-color-rgb: 135, 206, 250; /* Sky Blue RGB */
+}
+
+/* General Button & Interactive Element Styling for Animations */
+button, .button, .header-icon, .theme-preview-button, .model-select-button, .control-button, .secondary-button, #login-button, .save-button {
+    transition: all var(--transition-speed-fast) ease-in-out;
+}
+
+button:hover, .button:hover, .header-icon:hover, .theme-preview-button:hover, .model-select-button:hover, .control-button:hover, .secondary-button:hover, #login-button:hover, .save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+button:active, .button:active, .header-icon:active, .theme-preview-button:active, .model-select-button:active, .control-button:active, .secondary-button:active, #login-button:active, .save-button:active {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.dark-theme button:hover, body.dark-theme .button:hover, body.dark-theme .header-icon:hover, body.dark-theme .theme-preview-button:hover, body.dark-theme .model-select-button:hover, body.dark-theme .control-button:hover, body.dark-theme .secondary-button:hover, body.dark-theme #login-button:hover, body.dark-theme .save-button:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-theme button:active, body.dark-theme .button:active, body.dark-theme .header-icon:active, body.dark-theme .theme-preview-button:active, body.dark-theme .model-select-button:active, body.dark-theme .control-button:active, body.dark-theme .secondary-button:active, body.dark-theme #login-button:active, body.dark-theme .save-button:active {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 body.dark-theme {
@@ -175,7 +202,7 @@ body {
 
 .history-header h4 {
     margin: 0;
-    color: var(--primary-color);
+    color: var(--accent-color);
     opacity: 0;
     transition: opacity 0.2s ease;
 }
@@ -226,7 +253,7 @@ body {
 
 .history-item.active {
     background-color: var(--light-highlight);
-    border-color: var(--primary-color);
+    border-color: var(--accent-color);
     font-weight: bold;
 }
 
@@ -277,7 +304,7 @@ body.nord-theme .history-item.active {
 }
 
 .rename-history-item-btn:hover {
-    color: var(--primary-color);
+    color: var(--accent-color);
 }
 
 .delete-history-item-btn:hover {
@@ -288,7 +315,7 @@ body.nord-theme .history-item.active {
     flex-grow: 1;
     background-color: var(--background-color);
     color: var(--text-color);
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--accent-color);
     border-radius: 4px;
     padding: 0.25rem 0.5rem;
     font-family: var(--font-body);
@@ -307,8 +334,8 @@ body.nord-theme .history-item.active {
 }
 
 .input-area:has(#text-input:focus) {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
 }
 
 #text-input, #processed-text {
@@ -339,18 +366,17 @@ body.nord-theme .history-item.active {
 #process-button {
     margin-top: 1rem;
     padding: 0.8rem 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 #process-button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color-dark);
 }
 
 .button-group {
@@ -367,17 +393,16 @@ body.nord-theme .history-item.active {
 .secondary-button {
     padding: 0.8rem 1rem;
     background-color: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
     border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .secondary-button:hover {
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
 }
 
@@ -389,9 +414,9 @@ body.nord-theme .history-item.active {
 
 #synonym-list-container h2 {
     margin-top: 0;
-    color: var(--primary-color);
+    color: var(--accent-color);
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
 }
 
 .placeholder {
@@ -402,7 +427,7 @@ body.nord-theme .history-item.active {
 
 .replaceable {
     cursor: pointer;
-    border-bottom: 2px dotted var(--primary-color);
+    border-bottom: 2px dotted var(--accent-color);
     transition: background-color var(--transition-speed) var(--transition-ease);
 }
 
@@ -436,7 +461,7 @@ body.nord-theme .history-item.active {
 
 .synonym-group:hover {
     transform: translateY(-3px);
-    border-color: var(--primary-color);
+    border-color: var(--accent-color);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
@@ -474,7 +499,7 @@ body.dark-theme .synonym-group:hover {
 
 .synonym-item.selected {
     background-color: var(--light-highlight) !important;
-    color: var(--primary-color-dark) !important;
+    color: var(--accent-color-dark) !important;
     font-weight: 600;
 }
 
@@ -513,12 +538,11 @@ body.nord-theme .synonym-item.selected {
     align-items: center;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .header-icon:hover {
-    color: var(--primary-color);
-    transform: scale(1.1);
+    color: var(--accent-color);
+    transform: scale(1.1) translateY(-2px);
 }
 
 
@@ -612,7 +636,7 @@ body.nord-theme .synonym-item.selected {
 
 .modal-content h2 {
     margin-top: 0;
-    color: var(--primary-color);
+    color: var(--accent-color);
 }
 
 .modal-content p, .modal-content ol {
@@ -621,7 +645,7 @@ body.nord-theme .synonym-item.selected {
 }
 
 .modal-content a {
-    color: var(--primary-color);
+    color: var(--accent-color);
     text-decoration: none;
 }
 .modal-content a:hover {
@@ -652,18 +676,17 @@ body.nord-theme .synonym-item.selected {
     width: 100%;
     margin-top: 1.5rem;
     padding: 0.8rem 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 .save-button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color-dark);
 }
 
 .save-feedback {
@@ -710,23 +733,21 @@ body.nord-theme .synonym-item.selected {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.2s ease;
     color: var(--text-color-secondary);
     font-size: 0.9rem;
     font-weight: bold;
 }
 
 .theme-preview-button:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.1);
 }
 
 .theme-preview-button.selected {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.3);
-    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.3);
 }
 
 .theme-preview {
@@ -782,7 +803,7 @@ body.nord-theme .synonym-item.selected {
 #progress-bar {
     width: 0%;
     height: 100%;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     transition: width 0.5s ease-out;
 }
 
@@ -829,7 +850,7 @@ body.nord-theme .synonym-item.selected {
 
 .pos {
     font-style: italic;
-    color: var(--primary-color);
+    color: var(--accent-color);
     font-size: 0.9em;
     margin-left: 0.75em;
 }
@@ -851,7 +872,7 @@ body.nord-theme .synonym-item.selected {
 
 .bookmark-btn.bookmarked,
 .bookmark-btn.fa-solid {
-    color: var(--primary-color);
+    color: var(--accent-color);
 }
 
 #bookmark-list {
@@ -874,7 +895,7 @@ body.nord-theme .synonym-item.selected {
 .bookmark-item-content .original {
     font-weight: bold;
     font-size: 1.1rem;
-    color: var(--primary-color);
+    color: var(--accent-color);
 }
 
 .bookmark-item-content .pos,
@@ -991,7 +1012,7 @@ body.nord-theme .synonym-item.selected {
 .flashcard-back-content .original {
     font-weight: bold;
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: var(--accent-color);
     margin-bottom: 0.5rem;
 }
 
@@ -1041,11 +1062,10 @@ body.nord-theme .synonym-item.selected {
     padding: 0.8rem 1.2rem;
     border-radius: 8px;
     border: none;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
     font-size: 1.rem;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1053,7 +1073,7 @@ body.nord-theme .synonym-item.selected {
 }
 
 .control-button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color-dark);
 }
 
 .complete-button {
@@ -1328,11 +1348,11 @@ body.nord-theme .synonym-item.selected {
 }
 
 input:checked + .toggle-slider {
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
 }
 
 input:focus + .toggle-slider {
-    box-shadow: 0 0 1px var(--primary-color);
+    box-shadow: 0 0 1px var(--accent-color);
 }
 
 input:checked + .toggle-slider:before {
@@ -1393,23 +1413,21 @@ body.vertical-layout .right-panel {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.2s ease;
     color: var(--text-color-secondary);
     font-size: 0.9rem;
     font-weight: bold;
 }
 
 .model-select-button:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.1);
 }
 
 .model-select-button.selected {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.3);
-    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.3);
 }
 
 /* --- External Link Button --- */
@@ -1429,20 +1447,19 @@ body.vertical-layout .right-panel {
     display: block; /* ブロック要素にして幅いっぱいに広げる */
     width: 100%;
     padding: 0.8rem 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     text-align: center; /* テキストを中央揃え */
     text-decoration: none; /* リンクの下線を削除 */
 }
 
 .external-link-button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color-dark);
 }
 
 /* --- Auth in Modal --- */
@@ -1464,7 +1481,6 @@ body.vertical-layout .right-panel {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     text-decoration: none;
 }
 
@@ -1493,7 +1509,6 @@ body.vertical-layout .right-panel {
     padding: 0.4rem 0.8rem;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
     font-size: 0.9rem;
 }
 
@@ -1535,13 +1550,12 @@ body.vertical-layout .right-panel {
     font-family: var(--font-body);
     line-height: 1.6;
     resize: vertical; /* Allow vertical resizing */
-    transition: all var(--transition-speed) var(--transition-ease);
 }
 
 #dev-memo-pad:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
 }
 
 /* --- AI Detect Button --- */
@@ -1575,14 +1589,13 @@ body.vertical-layout .right-panel {
     font-weight: bold;
     border: none;
     border-radius: 6px;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     color: var(--light-panel-bg);
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 #notification-close-button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: var(--accent-color-dark);
 }
 
 /* --- Unified Input Field Styling --- */
@@ -1603,8 +1616,8 @@ body.vertical-layout .right-panel {
 #dev-username:focus,
 #dev-password:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
 }
 
 /* --- Translation Language Selector --- */
@@ -1639,8 +1652,44 @@ body.vertical-layout .right-panel {
 
 #translation-language-select:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
+}
+
+/* --- Typing Sound Selector --- */
+.typing-sound-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.typing-sound-container h3 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.typing-sound-container p {
+    margin: 0 0 1rem 0;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+}
+
+#typing-sound-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+}
+
+#typing-sound-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
 }
 
 /* Hide scrollbar for history list but allow scrolling */
