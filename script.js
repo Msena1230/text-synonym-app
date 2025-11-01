@@ -1,13 +1,7 @@
-import { firebaseConfig } from './firebase-config.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
-
-
-document.addEventListener('DOMContentLoaded', () => {
-
-
-    // --- Firebase Initialization ---
+import { firebaseConfig } from './firebase-config.js';
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -21,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '.skeleton-text.short { width: 40%; }\n' +
     '.shimmer::after { content: \'\'; position: absolute; top: 0; left: -150%; width: 150%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer-animation 1.5s infinite; }\n' +
     '@keyframes shimmer-animation { 100% { left: 150%; } }\n' +
-    /* Solarized Dark Theme */
+    '/* Solarized Dark Theme */\n' +
     '.solarized-dark-preview { background-color: #002b36; border: 1px solid #586e75; }\n' +
     '.solarized-dark-theme { --bg-color: #002b36; --text-color: #839496; --panel-bg-color: #073642; --border-color: #586e75; --header-text-color: #93a1a1; --button-text-color: #fdf6e3; --secondary-button-bg-color: #586e75; --secondary-button-text-color: #fdf6e3; --highlight-color: #2aa198; --modified-color: #b58900; --placeholder-color: #586e75; background-color: var(--bg-color); color: var(--text-color); }\n' +
     '.solarized-dark-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
@@ -39,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '.solarized-dark-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
     '.solarized-dark-theme #login-button { background-color: #dc322f; color: #fff; }\n' +
 
-    /* Solarized Light Theme */
+    '/* Solarized Light Theme */\n' +
     '.solarized-light-preview { background-color: #fdf6e3; border: 1px solid #93a1a1; }\n' +
     '.solarized-light-theme { --bg-color: #fdf6e3; --text-color: #657b83; --panel-bg-color: #eee8d5; --border-color: #93a1a1; --header-text-color: #586e75; --button-text-color: #fdf6e3; --secondary-button-bg-color: #eee8d5; --secondary-button-text-color: #657b83; --highlight-color: #2aa198; --modified-color: #b58900; --placeholder-color: #93a1a1; background-color: var(--bg-color); color: var(--text-color); }\n' +
     '.solarized-light-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
@@ -57,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '.solarized-light-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
     '.solarized-light-theme #login-button { background-color: #dc322f; color: #fff; }\n' +
 
-    /* Gruvbox Theme */
+    '/* Gruvbox Theme */\n' +
     '.gruvbox-preview { background-color: #282828; border: 1px solid #928374; }\n' +
     '.gruvbox-theme { --bg-color: #282828; --text-color: #ebdbb2; --panel-bg-color: #3c3836; --border-color: #928374; --header-text-color: #ebdbb2; --button-text-color: #ebdbb2; --secondary-button-bg-color: #504945; --secondary-button-text-color: #ebdbb2; --highlight-color: #83a598; --modified-color: #fabd2f; --placeholder-color: #928374; background-color: var(--bg-color); color: var(--text-color); }\n' +
     '.gruvbox-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
@@ -75,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '.gruvbox-theme .synonym-group { background-color: var(--bg-color); border-bottom: 1px solid var(--border-color); }\n' +
     '.gruvbox-theme #login-button { background-color: #D65D0E; color: #fff; }\n' +
 
-    /* Dracula Theme */
+    '/* Dracula Theme */\n' +
     '.dracula-preview { background-color: #282a36; border: 1px solid #6272a4; }\n' +
     '.dracula-theme { --bg-color: #282a36; --text-color: #f8f8f2; --panel-bg-color: #44475a; --border-color: #6272a4; --header-text-color: #f8f8f2; --button-text-color: #f8f8f2; --secondary-button-bg-color: #6272a4; --secondary-button-text-color: #f8f8f2; --highlight-color: #50fa7b; --modified-color: #ffb86c; --placeholder-color: #6272a4; background-color: var(--bg-color); color: var(--text-color); }\n' +
     '.dracula-theme .panel { background-color: var(--panel-bg-color); border: 1px solid var(--border-color); }\n' +
@@ -124,35 +118,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearTextButton = document.getElementById('clear-text-button');
     const copyOutputButton = document.getElementById('copy-output-button');
     const aiDetectButton = document.getElementById('ai-detect-button');
-    const historyPanel = document.querySelector('.history-panel');
-    const historyList = document.getElementById('history-list');
+    const viewDropdownContainer = document.querySelector('.view-dropdown-container');
+    const viewDropdownButton = document.getElementById('view-dropdown-button');
+    const viewDropdownMenu = document.getElementById('view-dropdown-menu');
+    const viewOriginalItem = document.getElementById('view-original-item');
+    const viewLastSavedItem = document.getElementById('view-last-saved-item');
+    const viewOverwriteItem = document.getElementById('view-overwrite-item');
+
+    const historyPanel = document.getElementById('history-panel');
     const clearHistoryButton = document.getElementById('clear-history-button');
-    const settingsButton = document.getElementById('settings-button');
+    const historyList = document.getElementById('history-list');
+
+    const startFlashcardsButton = document.getElementById('start-flashcards-button');
+    const bookmarkList = document.getElementById('bookmark-list');
+    const favoriteList = document.getElementById('favorite-list');
+    const startFavoriteFlashcardsButton = document.getElementById('start-favorite-flashcards-button');
+
     const settingsModal = document.getElementById('settings-modal');
+    const settingsButton = document.getElementById('settings-button');
     const closeSettingsModalButton = document.getElementById('close-settings-modal');
+
+    const bookmarkModal = document.getElementById('bookmark-modal');
+    const bookmarkListButton = document.getElementById('bookmark-list-button');
+    const closeBookmarkModalButton = document.getElementById('close-bookmark-modal');
+
+    const favoriteModal = document.getElementById('favorite-modal');
+    const favoriteListButton = document.getElementById('favorite-list-button');
+    const closeFavoriteModalButton = document.getElementById('close-favorite-modal');
+
     const apiKeyInput = document.getElementById('api-key-input');
     const saveApiKeyButton = document.getElementById('save-api-key');
     const saplingApiKeyInput = document.getElementById('sapling-api-key-input');
     const saveSaplingApiKeyButton = document.getElementById('save-sapling-api-key');
     const saveSaplingApiKeyFeedback = document.getElementById('save-sapling-api-key-feedback');
-    const themePreviewButtons = document.querySelectorAll('.theme-preview-button');
-    const accentColorButtons = document.querySelectorAll('.accent-color-button');
-    const modelSelectButtons = document.querySelectorAll('.model-select-button');
-    const layoutModeToggle = document.getElementById('layout-mode-toggle');
+
     const translationLanguageSelect = document.getElementById('translation-language-select');
     const typingSoundSelect = document.getElementById('typing-sound-select');
-    const bookmarkListButton = document.getElementById('bookmark-list-button');
-    const bookmarkModal = document.getElementById('bookmark-modal');
-    const closeBookmarkModalButton = document.getElementById('close-bookmark-modal');
-    const bookmarkList = document.getElementById('bookmark-list');
-    const startFlashcardsButton = document.getElementById('start-flashcards-button');
+    const layoutModeToggle = document.getElementById('layout-mode-toggle');
 
-    // --- New Favorites Elements ---
-    const favoriteListButton = document.getElementById('favorite-list-button');
-    const favoriteModal = document.getElementById('favorite-modal');
-    const closeFavoriteModalButton = document.getElementById('close-favorite-modal');
-    const favoriteList = document.getElementById('favorite-list');
-    const startFavoriteFlashcardsButton = document.getElementById('start-favorite-flashcards-button');
+    const modelSelectButtons = document.querySelectorAll('.model-select-button');
+    const themePreviewButtons = document.querySelectorAll('.theme-preview-button');
+    const accentColorButtons = document.querySelectorAll('.accent-color-button');
 
     // --- Search Inputs ---
     const historySearchInput = document.getElementById('history-search');
@@ -171,14 +177,115 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificationTitle = document.getElementById('notification-title');
     const notificationMessage = document.getElementById('notification-message');
     const notificationCloseButton = document.getElementById('notification-close-button');
-    const devLoginButton = document.getElementById('dev-login-button');
+    const reciprocalPromptButton = document.getElementById('reciprocal-prompt-button');
+    const reciprocalPromptModal = document.getElementById('reciprocal-prompt-modal');
+    const closeReciprocalPromptModalButton = document.getElementById('close-reciprocal-prompt-modal');
+    const reciprocalPromptOutput = document.getElementById('reciprocal-prompt-output');
+    const reciprocalPromptOkButton = document.getElementById('reciprocal-prompt-ok-button');
 
-    const devPasswordInput = document.getElementById('dev-password');
-    const devLoginFeedback = document.getElementById('dev-login-feedback');
-    const developerLoginContainer = document.getElementById('developer-login-container');
-    const developerMemoContainer = document.getElementById('developer-memo-container');
-    const devMemoPad = document.getElementById('dev-memo-pad');
 
+    // Pro-feature unlock elements
+    const proFeatureSection = document.getElementById('pro-feature-section');
+    const promoCodeContainer = document.getElementById('promo-code-container');
+    const promoCodeInput = document.getElementById('promo-code-input');
+    const applyPromoCodeButton = document.getElementById('apply-promo-code-button');
+    const promoCodeFeedback = document.getElementById('promo-code-feedback');
+    const humanizerUnlockedView = document.getElementById('humanizer-unlocked-view');
+
+
+    let currentViewMode = 'original'; // 'original' or 'edited'
+
+    const saveCurrentEditedContent = () => {
+        if (!activeHistoryId) return;
+        const activeItem = history.find(item => item.id === activeHistoryId);
+        if (activeItem) {
+            activeItem.editedHtmlContent = processedText.innerHTML;
+            saveHistory(); // Save to localStorage and Firestore
+            console.log(`Edited content auto-saved for item ${activeHistoryId}`);
+        }
+    };
+
+    const renderOriginalView = () => {
+        if (!activeHistoryId) return;
+        const activeItem = history.find(item => item.id === activeHistoryId);
+        if (activeItem && activeItem.synonymData && activeItem.parts) {
+            renderSynonymCandidates(activeItem.synonymData, activeItem.parts);
+        }
+        else {
+            processedText.innerHTML = '';
+            synonymList.innerHTML = '<p class="placeholder">No synonym data saved. Process again.</p>';
+        }
+        currentViewMode = 'original';
+        updateViewButtonText();
+    };
+
+    const updateViewButtonText = () => {
+        if (viewDropdownButton) {
+            const textSpan = viewDropdownButton.querySelector('span');
+            if (currentViewMode === 'original') {
+                textSpan.textContent = 'Original';
+            } else {
+                textSpan.textContent = 'Edited';
+            }
+            // Add 'selected' class for styling if needed
+            viewDropdownButton.classList.toggle('selected', currentViewMode === 'edited');
+        }
+    };
+
+    if (viewDropdownButton) {
+        viewDropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click from immediately closing
+            viewDropdownMenu.classList.toggle('hidden');
+            viewDropdownContainer.classList.toggle('active');
+        });
+    }
+
+    if (viewOriginalItem) {
+        viewOriginalItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            renderOriginalView();
+            viewDropdownMenu.classList.add('hidden');
+            viewDropdownContainer.classList.remove('active');
+        });
+    }
+
+    if (viewLastSavedItem) {
+        viewLastSavedItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!activeHistoryId) return;
+            const activeItem = history.find(item => item.id === activeHistoryId);
+            if (activeItem && activeItem.editedHtmlContent) {
+                processedText.innerHTML = activeItem.editedHtmlContent;
+                currentViewMode = 'edited';
+                updateViewButtonText();
+            } else {
+                showNotification('No Saved Edits', 'There are no saved edits for this item. Showing original view.');
+                renderOriginalView();
+            }
+            viewDropdownMenu.classList.add('hidden');
+            viewDropdownContainer.classList.remove('active');
+        });
+    }
+
+    if (viewOverwriteItem) {
+        viewOverwriteItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveCurrentEditedContent(); // Overwrite with current processedText content
+            currentViewMode = 'edited';
+            updateViewButtonText();
+            viewDropdownMenu.classList.add('hidden');
+            viewDropdownContainer.classList.remove('active');
+        });
+    }
+
+    // Hide dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+        if (viewDropdownMenu && !viewDropdownMenu.contains(e.target) &&
+            viewDropdownButton && !viewDropdownButton.contains(e.target)) {
+            viewDropdownMenu.classList.add('hidden');
+            viewDropdownContainer.classList.remove('active');
+        }
+    });
 
     // --- Plain Text Paste Logic ---
     const handlePaste = (e) => {
@@ -219,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let geminiApiKey = '';
-    let isDevLoggedIn = false; // Tracks if developer has logged in
+
 
     let saplingApiKey = '';
     let history = [];
@@ -230,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedTranslationLanguage = 'Japanese';
     let selectedAccentColor = '#4a89dc';
     let selectedTypingSound = 'none';
+
 
     // --- Typing Sound Assets ---
     const typingSounds = {
@@ -290,7 +398,9 @@ document.addEventListener('DOMContentLoaded', () => {
             userProfile.classList.remove('hidden');
             guestView.classList.add('hidden');
             userName.textContent = user.displayName;
-            historyPanel.style.display = 'flex';
+            if (historyPanel) {
+                historyPanel.style.display = 'flex';
+            }
             await loadDataFromFirestore(user);
         } else {
             userProfile.classList.add('hidden');
@@ -300,7 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Guest Mode: History Disabled ---
             history = [];
             historyList.innerHTML = '<p class="placeholder">Please log in to use the history feature.</p>';
-            historyPanel.style.display = 'none';
+            if (historyPanel) {
+                historyPanel.style.display = 'none';
+            }
 
             const localBookmarks = JSON.parse(localStorage.getItem('bookmarkedWords') || '[]');
             saveBookmarks(localBookmarks, false);
@@ -315,6 +427,10 @@ document.addEventListener('DOMContentLoaded', () => {
             loadSaplingApiKey();
             loadAccentColor();
             loadTypingSound();
+
+            // Reset and hide pro feature for guests
+            isPro = false;
+            updateHumanizerFeatureUI();
         }
     });
 
@@ -336,13 +452,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 geminiApiKey = userSettings.geminiApiKey || '';
                 selectedAccentColor = userSettings.accentColor || '#4a89dc';
                 selectedTypingSound = userSettings.typingSound || 'none';
+                isPro = userSettings.isPro || false;
+
                 updateSelectedThemeButton(userSettings.theme || 'light');
                 updateSelectedModelButton();
                 updateSelectedAccentColorButton();
-                translationLanguageSelect.value = selectedTranslationLanguage;
-                typingSoundSelect.value = selectedTypingSound;
-                saplingApiKeyInput.value = saplingApiKey;
-                apiKeyInput.value = geminiApiKey;
+                if (translationLanguageSelect) {
+                    translationLanguageSelect.value = selectedTranslationLanguage;
+                }
+                if (typingSoundSelect) {
+                    typingSoundSelect.value = selectedTypingSound;
+                }
+                if (saplingApiKeyInput) {
+                    saplingApiKeyInput.value = saplingApiKey;
+                }
+                if (apiKeyInput) {
+                    apiKeyInput.value = geminiApiKey;
+                }
                 applyAccentColor(selectedAccentColor);
 
                 // Sync Firestore settings to localStorage to prevent overwrites
@@ -357,13 +483,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else {
                 console.log("Creating new user document in Firestore.");
+                isPro = false; // Default for new users
                 saveUserData();
             }
             renderHistory();
+            updateHumanizerFeatureUI(); // Update UI based on loaded settings
         } catch (error) {
             console.error("Error loading data from Firestore: ", error);
             loadHistory();
             renderBookmarks();
+            updateHumanizerFeatureUI(); // Also update UI on error to ensure correct state
         }
     };
 
@@ -383,7 +512,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 saplingApiKey: saplingApiKey,
                 geminiApiKey: geminiApiKey,
                 accentColor: selectedAccentColor,
-                typingSound: selectedTypingSound
+                typingSound: selectedTypingSound,
+                isPro: isPro
             }
         };
         try {
@@ -395,6 +525,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     loginButton.addEventListener('click', () => {
+        const termsAgreeCheckbox = document.getElementById('terms-agree-checkbox');
+        if (!termsAgreeCheckbox.checked) {
+            showNotification('Agreement Required', 'Please agree to the Terms of Service and Privacy Policy before signing in.');
+            return;
+        }
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider).catch(error => {
             console.error('Login failed', error);
@@ -411,6 +546,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!auth.currentUser) return;
         localStorage.setItem('synonymFinderHistory', JSON.stringify(history));
         saveUserData();
+    };
+
+    const updateVersionDropdown = () => {
+        // バージョン管理機能が実装された際にロジックを追加
+        console.log('updateVersionDropdown called. (Function not yet implemented)');
     };
 
     const getHistoryGroup = (timestamp) => {
@@ -545,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addHistoryItem = (text, parts, synonymData) => {
         if (!auth.currentUser) return;
         if (!text || !text.trim()) return;
-        const newItem = { id: Date.now(), text, parts, synonymData };
+        const newItem = { id: Date.now(), text, parts, synonymData, versions: [] };
         const existingIndex = history.findIndex(item => item.text === text);
         if (existingIndex > -1) {
             history.splice(existingIndex, 1);
@@ -557,23 +697,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         saveHistory();
         renderHistory();
+        updateVersionDropdown();
     };
 
-    const loadHistoryItem = (id) => {
+    const loadHistoryItem = (id, versionId = undefined) => {
         const item = history.find(h => h.id === id);
         if (item) {
             textInput.value = item.text;
             activeHistoryId = id;
-            if (item.synonymData && item.parts) {
+
+            // Determine which version to load
+            let versionToLoad = null;
+            if (versionId) {
+                versionToLoad = item.versions.find(v => v.versionId === versionId);
+            } else if (item.versions && item.versions.length > 0) {
+                versionToLoad = item.versions[item.versions.length - 1]; // Default to latest
+            }
+
+            // Render text and synonyms
+            // Prioritize showing the last saved edited content if it exists.
+            if (item.editedHtmlContent) {
+                processedText.innerHTML = DOMPurify.sanitize(item.editedHtmlContent);
+                currentViewMode = 'edited';
+                updateViewButtonText();
+                // We still need the synonym list to be populated for context.
+                if (item.synonymData && item.parts) {
+                    renderSynonymList(item.synonymData, item.parts);
+                } else {
+                    synonymList.innerHTML = '<p class="placeholder">No synonym data available.</p>';
+                }
+            } else if (versionToLoad) {
+                if (item.synonymData && item.parts) {
+                    renderSynonymCandidates(item.synonymData, item.parts);
+                } else {
+                    processedText.innerHTML = DOMPurify.sanitize(versionToLoad.htmlContent); // synonymDataがない場合は元のHTMLを表示
+                }
+            } else if (item.synonymData && item.parts) {
                 renderSynonymCandidates(item.synonymData, item.parts);
             } else {
                 processedText.innerHTML = '';
                 synonymList.innerHTML = '<p class="placeholder">No synonym data saved. Process again.</p>';
             }
+
             textInput.style.zIndex = -1;
             processedText.style.zIndex = 1;
             renderHistory();
             textInput.dispatchEvent(new Event('input', { bubbles: true }));
+            updateVersionDropdown();
         }
     };
 
@@ -586,6 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         saveHistory();
         renderHistory();
+        updateVersionDropdown();
     };
 
     const clearHistory = () => {
@@ -596,6 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
             processedText.innerHTML = '';
             saveHistory();
             renderHistory();
+            updateVersionDropdown();
         }
     };
 
@@ -638,14 +810,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const item = document.createElement('div');
             item.className = 'bookmark-item';
             const synonymsHTML = bookmark.synonyms.map(s => `<li>${s.word} <span class="translation">(${s.translation})</span></li>`).join('');
-            item.innerHTML = `
+            item.innerHTML = DOMPurify.sanitize(`
                 <div class="bookmark-item-content">
                     <div class="original">${bookmark.originalWord} <span class="pos">(${bookmark.pos})</span><span class="translation">(${bookmark.meaning || bookmark.translation || ''})</span></div>
                     <p class="item-context">...${bookmark.context_phrase}...</p>
                     <ul class="bookmark-synonyms">${synonymsHTML}</ul>
                 </div>
                 <button class="remove-bookmark-btn" data-word="${bookmark.originalWord}" data-context="${bookmark.context_phrase}"><i class="fas fa-trash-alt"></i></button>
-            `;
+            `);
             bookmarkList.appendChild(item);
         });
         document.querySelectorAll('.remove-bookmark-btn').forEach(button => {
@@ -691,14 +863,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const item = document.createElement('div');
             item.className = 'bookmark-item'; // Using same style as bookmarks
             const synonymsHTML = favorite.synonyms.map(s => `<li>${s.word} <span class="translation">(${s.translation})</span></li>`).join('');
-            item.innerHTML = `
+            item.innerHTML = DOMPurify.sanitize(`
                 <div class="bookmark-item-content">
                     <div class="original">${favorite.originalWord} <span class="pos">(${favorite.pos})</span><span class="translation">(${favorite.meaning || favorite.translation || ''})</span></div>
                     <p class="item-context">...${favorite.context_phrase}...</p>
                     <ul class="bookmark-synonyms">${synonymsHTML}</ul>
                 </div>
                 <button class="remove-bookmark-btn" data-word="${favorite.originalWord}" data-context="${favorite.context_phrase}"><i class="fas fa-trash-alt"></i></button>
-            `;
+            `);
             favoriteList.appendChild(item);
         });
         // Note: We use a more specific selector to avoid conflicts with the bookmark list handler
@@ -788,13 +960,13 @@ document.addEventListener('DOMContentLoaded', () => {
         flashcard.classList.remove('is-flipped');
         flashcardFront.textContent = cardData.originalWord;
         const synonymsHTML = cardData.synonyms.map(s => `<li>${s.word} <span class="translation">(${s.translation})</span></li>`).join('');
-        flashcardBack.innerHTML = `
+        flashcardBack.innerHTML = DOMPurify.sanitize(`
             <div class="flashcard-back-content">
                 <div class="original">${cardData.originalWord} <span class="pos">(${cardData.pos})</span><span class="translation">(${cardData.meaning || cardData.translation || ''})</span></div>
                 <p class="item-context">...${cardData.context_phrase}...</p>
                 <ul class="bookmark-synonyms">${synonymsHTML}</ul>
             </div>
-        `;
+        `);
         flashcardProgress.textContent = `${currentFlashcardIndex + 1} / ${flashcardQuiz.length}`;
     };
 
@@ -860,9 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (e.key) {
             case 'ArrowRight': e.preventDefault(); nextFlashcardButton.click(); break;
             case 'ArrowLeft': e.preventDefault(); prevFlashcardButton.click(); break;
-            case ' ':
-            case 'ArrowUp':
-            case 'ArrowDown':
+            case ' ': case 'ArrowUp': case 'ArrowDown':
                 e.preventDefault();
                 flashcard.click();
                 break;
@@ -870,20 +1040,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Modal Logic ---
+
+    // --- Modal Logic ---
     const openSettingsModal = () => settingsModal.classList.remove('hidden');
     const closeSettingsModal = () => {
         settingsModal.classList.add('hidden');
-        // Reset developer zone view
-        const loginContainer = document.getElementById('developer-login-container');
-        if(loginContainer) loginContainer.classList.remove('hidden');
-        developerMemoContainer.classList.add('hidden');
-        devPasswordInput.value = '';
-        devLoginFeedback.classList.remove('visible');
-        isDevLoggedIn = false;
-        devAccessLevel = null;
-        currentMemoDocRef = null;
-        devMemoPad.value = '';
-        devMemoPad.setAttribute('readonly', true);
     };
     const openBookmarkModal = () => { renderBookmarks(); bookmarkModal.classList.remove('hidden'); };
     const closeBookmarkModal = () => bookmarkModal.classList.add('hidden');
@@ -998,13 +1159,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Display highlighted text for 10 seconds
-            processedText.innerHTML = scoreStringHtml;
+            processedText.innerHTML = DOMPurify.sanitize(scoreStringHtml);
             showNotification('AI Detection Result', `AI Detection Score: ${scorePercentage}% AI-generated.\nHighlighted parts indicate AI-generated content.`);
 
             setTimeout(() => {
                 // Revert to original content or switch back to the input view
                 if (isOutputPopulated) {
-                    processedText.innerHTML = originalProcessedTextContent;
+                    processedText.innerHTML = DOMPurify.sanitize(originalProcessedTextContent);
                 } else {
                     processedText.innerHTML = '';
                     textInput.style.zIndex = 1;
@@ -1020,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setProgress(percentage, message = '') { progressBar.style.width = `${percentage}%`; if (message) progressMessage.textContent = message; }
     function showProgressBar() { progressContainer.classList.remove('hidden'); }
     function hideProgressBar(delay = 500) { setTimeout(() => { progressContainer.classList.add('hidden'); }, delay); }
-    function startMessageInterval(expectedTime) { stopMessageInterval(); messageIntervalId = setInterval(() => { progressMessage.classList.add('fading-out'); setTimeout(() => { const randomIndex = Math.floor(Math.random() * loadingMessages.length); progressMessage.textContent = `${loadingMessages[randomIndex]} (est. ${expectedTime}s)`; progressMessage.classList.remove('fading-out'); }, 500); }, 3000); }
+    function startMessageInterval(expectedTime) { stopMessageInterval(); messageIntervalId = setInterval(() => { progressMessage.classList.add('fading-out'); setTimeout(() => { const randomIndex = Math.floor(Math.random() * loadingMessages.length); progressMessage.textContent = `${loadingMessages[randomIndex]} (est. ${expectedTime}s)`; progressMessage.classList.remove('fading-out'); }, 500); }, 3000); } 
     function stopMessageInterval() { if (messageIntervalId) { clearInterval(messageIntervalId); messageIntervalId = null; } }
     function startProgressBar(duration) { stopProgressBar(); let currentProgress = 0; progressBar.style.width = '0%'; const incrementMillis = 100; const totalSteps = duration * 1000 / incrementMillis; const step = 99 / totalSteps; progressIntervalId = setInterval(() => { currentProgress += step; if (currentProgress >= 99) { currentProgress = 99; stopProgressBar(); } progressBar.style.width = `${currentProgress}%`; }, incrementMillis); } 
     function stopProgressBar() { if (progressIntervalId) { clearInterval(progressIntervalId); progressIntervalId = null; } }
@@ -1148,6 +1309,12 @@ document.addEventListener('DOMContentLoaded', () => {
         translationLanguageSelect.value = savedLanguage;
     }
 
+    translationLanguageSelect.addEventListener('change', (e) => {
+        selectedTranslationLanguage = e.target.value;
+        localStorage.setItem('translationLanguage', selectedTranslationLanguage);
+        saveUserData();
+    });
+
     // --- Typing Sound Logic ---
     function loadTypingSound() {
         const savedSound = localStorage.getItem('typingSound') || 'none';
@@ -1174,85 +1341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     layoutModeToggle.addEventListener('change', (e) => applyLayoutMode(e.target.checked));
 
-    // --- Helper for SHA-256 Hashing ---
-    async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
 
-    // --- Developer Zone Logic ---
-    const devAccounts = {
-        // Set 1
-        '0fc2e3d4c35968ee6f4b627b496736dc232c9422c63ffc96118f04222c0404c1': { level: 'readonly', memoId: 'apiMemo_1' }, // israpicodeisr
-        'a24125089ac9f110389cb6dd4b8a3195cbf12b531ceef7ad8b787e9cd372f9fb': { level: 'readwrite', memoId: 'apiMemo_1' }, // MSena19231230
-        // Set 2
-        'ce82226da6a1d0120c614c88e2e1bd0df5f6adb429174893fe1adcf60afe0f09': { level: 'readonly', memoId: 'apiMemo_2' }, // isrjaps0001
-        '23323429612711146d0e8462fff979a00a24639df5e8059b322df69a6486d6b1': { level: 'readwrite', memoId: 'apiMemo_2' }, // MSena192312300001
-        // Set 3
-        '4079793e291bdaa6bc82f658d8cc838f982c435f914e61435bd02ae256689b38': { level: 'readonly', memoId: 'apiMemo_3' }, // isrjaps2000
-        'ff2ec3436c8c8fa5b7b4ab437dede17afa04f7fa0a63a8d9eee7d87b44702738': { level: 'readwrite', memoId: 'apiMemo_3' }  // MSena192312302000
-    };
-    let devAccessLevel = null;
-    let currentMemoDocRef = null;
-
-    devLoginButton.addEventListener('click', async () => {
-        const password = devPasswordInput.value;
-        if (!password) return;
-        const inputPassHash = await sha256(password);
-        const account = devAccounts[inputPassHash];
-
-        if (account) {
-            devAccessLevel = account.level;
-            isDevLoggedIn = true;
-            currentMemoDocRef = doc(db, 'devMemos', account.memoId);
-
-            try {
-                const docSnap = await getDoc(currentMemoDocRef);
-                if (docSnap.exists()) {
-                    devMemoPad.value = docSnap.data().content || '';
-                } else {
-                    // If the document doesn't exist, create it with a default message
-                    await setDoc(currentMemoDocRef, { content: `Welcome to memo ${account.memoId}. Start typing here...` });
-                    devMemoPad.value = `Welcome to memo ${account.memoId}. Start typing here...`;
-                }
-            } catch (error) {
-                console.error("Error fetching dev memo: ", error);
-                devMemoPad.value = 'Error fetching memo.';
-            }
-
-            // Hide the login form and show the memo container
-            const loginContainer = document.getElementById('developer-login-container');
-            if(loginContainer) loginContainer.classList.add('hidden');
-            developerMemoContainer.classList.remove('hidden');
-
-            if (devAccessLevel === 'readonly') {
-                devMemoPad.setAttribute('readonly', true);
-            } else {
-                devMemoPad.removeAttribute('readonly');
-            }
-
-        } else {
-            devLoginFeedback.textContent = 'Invalid credentials.';
-            devLoginFeedback.style.color = '#dc3545';
-            devPasswordInput.value = '';
-            devLoginFeedback.classList.add('visible');
-            setTimeout(() => { devLoginFeedback.classList.remove('visible'); }, 2000);
-        }
-    });
-
-    devMemoPad.addEventListener('input', async () => {
-        if (devAccessLevel === 'readwrite' && currentMemoDocRef) {
-            try {
-                // Use setDoc with merge:true to avoid overwriting other fields if they exist
-                await setDoc(currentMemoDocRef, { content: devMemoPad.value }, { merge: true });
-            } catch (error) {
-                console.error("Error auto-saving dev memo: ", error);
-            }
-        }
-    });
 
 
 
@@ -1331,12 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 Your turn. Text: "${sanitizedText}"`;
         } else {
             // For spaced languages, include spaces as separate components
-            prompt = `Analyze the following text in ${sourceLanguage} and extract a comprehensive list of all its meaningful components. It is crucial that you include individual words, punctuation, spaces, and explicit newline characters (\\n) ONLY if they are present in the original text as separate elements in the array. Preserve the original order and casing. Return the result as a single JSON array of strings.\n\nText: "He decided to give up.\\nThen he looked for a new job."
-
-Example Output:
-["He", " ", "decided", " ", "to", " ", "give up", ".", "\\n", "Then", " ", "he", " ", "looked for", " ", "a", " ", "new", " ", "job", "."]
-
-Your turn. Text: "${sanitizedText}"`;
+prompt = `Analyze the following text in ${sourceLanguage} and extract a list of its meaningful components.\n- Include individual words, punctuation, and spaces as separate elements. Crucially, every single newline character (\\n) must be preserved as a distinct, separate element in the array. For example, a blank line (two consecutive newlines) must be represented as two separate "\\n" elements in the array.\n- Prioritize keeping common multi-word expressions (e.g., "such as", "artificial intelligence") as single elements.\n- **Strictly preserve the original casing of each component.**\n- Return the result as a single JSON array of strings.\n\nText: "${sanitizedText}"`;
         }
         const requestBody = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { "response_mime_type": "application/json" } };
         try {
@@ -1345,7 +1429,7 @@ Your turn. Text: "${sanitizedText}"`;
             const data = await response.json();
             const resultText = data.candidates[0]?.content?.parts[0]?.text;
             if (!resultText) return { status: 'error', message: 'API returned empty response for phrase extraction.' };
-            const jsonMatch = resultText.match(/\[.*\]/s);
+            const jsonMatch = resultText.match(/[\[\s\S\]]*/);
             if (!jsonMatch) return { status: 'error', message: 'Could not find valid JSON array in the API response.' };
             const cleanedText = jsonMatch[0];
             return { status: 'success', data: JSON.parse(cleanedText) };
@@ -1381,8 +1465,7 @@ Your turn. Text: "${sanitizedText}"`;
         const requestBody = {
             key: saplingApiKey,
             text: text,
-            score_string: true, // Request highlighted HTML
-            version: '20240606' // Use the latest version
+            score_string: true // Request highlighted HTML
         };
 
         try {
@@ -1395,8 +1478,16 @@ Your turn. Text: "${sanitizedText}"`;
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                const errorMessage = errorData.detail || errorData.message || 'Unknown API error from Sapling.';
+                const status = response.status;
+                const errorText = await response.text(); // Use .text() to be safe
+                
+                let errorMessage;
+                try {
+                    const errorData = JSON.parse(errorText); // Try to parse as JSON
+                    errorMessage = errorData.detail || errorData.message || `API returned status ${status}. Check the console for details.`;
+                } catch (e) {
+                    errorMessage = `API returned status ${status}. The response was not valid JSON. Check the console for the full response.`;
+                }
                 return { status: 'error', message: `Sapling API Error: ${errorMessage}` };
             }
 
@@ -1404,19 +1495,17 @@ Your turn. Text: "${sanitizedText}"`;
             return { status: 'success', data: data };
 
         } catch (error) {
-            console.error('Sapling AI detection error:', error);
-            return { status: 'error', message: 'Network error or other issue with Sapling API.' };
+            console.error("Sapling AI detection error:", error);
+            return { status: 'error', message: 'Network error or other issue.' };
         }
     }
 
     async function fetchSynonymsInBatch(words, text, sourceLanguage, translationLanguage) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${geminiApiKey}`;
-        const prompt = `Given the following full text in ${sourceLanguage}:
-"""
+        const prompt = `First, analyze the overall tone of the following full text in ${sourceLanguage} (e.g., Formal, Casual, Academic). Then, for each word/phrase in the following JSON array, provide contextual synonyms that match that overall tone.\n\nFull text:\n"""
 ${text}
-""
+"""
 
-For each word/phrase in the following JSON array, analyze all its occurrences within the full text and provide contextual information.
 Words to analyze: ${JSON.stringify(words)}
 
 Return a single JSON object. The keys of this object should be the original words/phrases.
@@ -1426,7 +1515,7 @@ Each object in the array must have the following structure:
   "pos": "The specific part of speech in context (e.g., \"Noun\", \"Verb\").",
   "meaning": "A brief ${translationLanguage} definition of the word in that context.",
   "context_phrase": "A short snippet from the text showing the word in context.",
-  "synonyms": "An array of exactly 3 synonym objects in ${sourceLanguage} if possible. If 3 are not available, provide as many as you can. Each object should have a 'word' and a 'translation' (in ${translationLanguage}) key."
+  "synonyms": "An array of exactly 3 synonym objects in ${sourceLanguage} that fit the text's overall tone. If 3 are not available, provide as many as you can. Each object should have a 'word' and a 'translation' (in ${translationLanguage}) key. Unless a synonym is a proper noun, its 'word' value should be entirely lowercase."
 }
 
 Example for the word 'book' in 'I need to book a flight to read a book.' (Source: English, Translation: Japanese):
@@ -1444,14 +1533,36 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
                  return { status: 'error', message: `API Error: ${errorMessage}` };
             }
             const data = await response.json();
+
+            if (!data.candidates || data.candidates.length === 0) {
+                let message = 'The API returned no synonym candidates.';
+                if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    message += ` This might be due to a safety policy violation. Reason: ${data.promptFeedback.blockReason}.`;
+                } else {
+                    message += ' This can happen with certain types of text. Please try modifying your input.';
+                }
+                return { status: 'error', message: message };
+            }
+
             const resultText = data.candidates[0]?.content?.parts[0]?.text;
             if (resultText) {
-                const jsonMatch = resultText.match(/\{.*\}/s);
-                if (!jsonMatch) return { status: 'error', message: 'Could not find valid JSON object in the API response.' };
-                const cleanedText = jsonMatch[0];
-                return { status: 'success', data: JSON.parse(cleanedText) };
-            } else {
-                return { status: 'error', message: 'API returned empty response.' };
+                            // Extract JSON object from the raw text response
+                            const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+                            if (!jsonMatch) {
+                                return { status: 'error', message: 'Could not find valid JSON object in the API response for synonyms.' };
+                            }
+                            const cleanedText = jsonMatch[0];
+                            const rawSynonymData = JSON.parse(cleanedText);
+                
+                            // キーを小文字に正規化する処理を追加
+                            const normalizedSynonymData = {};
+                            for (const key in rawSynonymData) {
+                                if (Object.prototype.hasOwnProperty.call(rawSynonymData, key)) {
+                                    normalizedSynonymData[key.toLowerCase()] = rawSynonymData[key];
+                                }
+                            }
+                            return { status: 'success', data: normalizedSynonymData };            } else {
+                return { status: 'error', message: 'API returned an empty response part.' };
             }
         } catch (error) {
             console.error('Fetch or other error:', error);
@@ -1459,14 +1570,52 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         }
     }
 
-    function renderSynonymCandidates(synonymData, parts) {
+    function renderProcessedText(synonymData, parts) {
+        let htmlString = '';
+        let wordIdCounter = 0;
+        const wordUsageCount = {};
+
+        parts.forEach((part, index) => {
+            // Check if the part consists only of whitespace and newline characters
+            if (/^\s*\n+\s*$/.test(part)) {
+                const newlineCount = (part.match(/\n/g) || []).length;
+                htmlString += '<br>'.repeat(newlineCount);
+            } else {
+                // This is not a newline part, process as a word or punctuation
+                let meanings = synonymData[part.toLowerCase()];
+                if (meanings && !Array.isArray(meanings)) {
+                    meanings = [meanings];
+                }
+                if (meanings && meanings.length > 0) {
+                    const usageIndex = wordUsageCount[part] || 0;
+                    const data = meanings[usageIndex % meanings.length];
+                    wordUsageCount[part] = usageIndex + 1;
+                    if (data && data.synonyms && data.synonyms.length > 0) {
+                        wordIdCounter++;
+                        const wordId = `word-${wordIdCounter}`;
+                        htmlString += `<span id="${wordId}" class="replaceable" data-original-word="${part}">${part}</span>`;
+                    } else {
+                        htmlString += part;
+                    }
+                } else {
+                    htmlString += part;
+                }
+            }
+        });
+
+        processedText.innerHTML = DOMPurify.sanitize(htmlString);
+    }
+
+    function renderSynonymList(synonymData, parts) {
         synonymList.innerHTML = '';
-        processedText.innerHTML = '';
         let wordIdCounter = 0;
         let replaceableFound = false;
         const wordUsageCount = {};
         parts.forEach(part => {
-            const meanings = synonymData[part];
+            let meanings = synonymData[part.toLowerCase()];
+            if (meanings && !Array.isArray(meanings)) {
+                meanings = [meanings];
+            }
             if (meanings && meanings.length > 0) {
                 const usageIndex = wordUsageCount[part] || 0;
                 const data = meanings[usageIndex % meanings.length];
@@ -1476,35 +1625,18 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
                     wordIdCounter++;
                     const wordId = `word-${wordIdCounter}`;
                     const groupId = `group-${wordIdCounter}`;
-                    const span = document.createElement('span');
-                    span.textContent = part;
-                    span.id = wordId;
-                    span.className = 'replaceable';
-                    span.dataset.originalWord = part;
-                    processedText.appendChild(span);
                     createSynonymGroup(part, data, wordId, groupId);
-                } else {
-                    if (/^\n+$/.test(part)) {
-                        for (let i = 0; i < part.length; i++) {
-                            processedText.appendChild(document.createElement('br'));
-                        }
-                    } else {
-                        processedText.appendChild(document.createTextNode(part));
-                    }
-                }
-            } else {
-                if (/^\n+$/.test(part)) {
-                    for (let i = 0; i < part.length; i++) {
-                        processedText.appendChild(document.createElement('br'));
-                    }
-                } else {
-                    processedText.appendChild(document.createTextNode(part));
                 }
             }
         });
         if (!replaceableFound) {
             synonymList.innerHTML = '<p class="placeholder">No synonyms found for the words in your text.</p>';
         }
+    }
+
+    function renderSynonymCandidates(synonymData, parts) {
+        renderProcessedText(synonymData, parts);
+        renderSynonymList(synonymData, parts);
     }
 
     function createSynonymGroup(originalWord, data, wordId, groupId) {
@@ -1516,7 +1648,7 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         const bookmarkBtn = document.createElement('i');
         const bookmarks = getBookmarks();
         const isBookmarked = bookmarks.some(b => b.originalWord === originalWord && b.context_phrase === data.context_phrase);
-        bookmarkBtn.className = `bookmark-btn fas fa-bookmark ${isBookmarked ? 'bookmarked' : ''}`;
+        bookmarkBtn.className = `bookmark-btn ${isBookmarked ? 'fas' : 'far'} fa-bookmark ${isBookmarked ? 'bookmarked' : ''}`;
         bookmarkBtn.title = 'Bookmark this word';
         // Manual absolute positioning
         bookmarkBtn.style.position = 'absolute';
@@ -1530,11 +1662,13 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
             const alreadyExistsIndex = currentBookmarks.findIndex(b => b.originalWord === originalWord && b.context_phrase === data.context_phrase);
             if (alreadyExistsIndex > -1) {
                 currentBookmarks.splice(alreadyExistsIndex, 1);
-                bookmarkBtn.classList.remove('bookmarked');
+                bookmarkBtn.classList.remove('fas', 'bookmarked');
+                bookmarkBtn.classList.add('far');
             } else {
                 const newBookmark = { originalWord, pos: data.pos, meaning: data.meaning, context_phrase: data.context_phrase, synonyms: data.synonyms };
                 currentBookmarks.push(newBookmark);
-                bookmarkBtn.classList.add('bookmarked');
+                bookmarkBtn.classList.remove('far');
+                bookmarkBtn.classList.add('fas', 'bookmarked');
             }
             saveBookmarks(currentBookmarks);
         });
@@ -1575,13 +1709,13 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         group.addEventListener('mouseleave', () => document.getElementById(wordId).classList.remove('highlight'));
         const originalWordEl = document.createElement('div');
         originalWordEl.className = 'original-word selected';
-        originalWordEl.innerHTML = `${originalWord} <span class="pos">(${data.pos || ''})</span> <span class="translation">(${data.meaning || data.translation || ''})</span>`;
+        originalWordEl.innerHTML = DOMPurify.sanitize(`${originalWord} <span class="pos">(${data.pos || ''})</span> <span class="translation">(${data.meaning || data.translation || ''})</span>`);
         group.appendChild(originalWordEl);
         const allClickableItems = [originalWordEl];
         data.synonyms.slice(0, 3).forEach(syn => { 
             const item = document.createElement('div'); 
             item.className = 'synonym-item'; 
-            item.innerHTML = `<span class="synonym-word">${syn.word}</span> <span class="translation">(${syn.translation || ''})</span>`; 
+            item.innerHTML = DOMPurify.sanitize(`<span class="synonym-word">${syn.word}</span> <span class="translation">(${syn.translation || ''})</span>`); 
             group.appendChild(item); 
             allClickableItems.push(item); 
         });
@@ -1653,8 +1787,6 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         const parts = phraseExtractionResult.data;
         const uniqueWordsAndPhrases = [...new Set(parts.filter(p => {
             const lowerCasePart = p.toLowerCase();
-            // Filter for words that are likely to have synonyms in the source language
-            // Removed p.match(/[a-zA-Z]/) to support non-English languages
             return p.trim() !== '' && !stopWords.has(lowerCasePart);
         }))];
         const timeoutId = setTimeout(() => { if (isProcessing) { stopMessageInterval(); setProgress(99, 'May take some extra time...'); } }, expectedTime * 1000);
@@ -1678,8 +1810,12 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         stopAllIntervals();
         if (result.status === 'error') {
             alert(result.message || 'An unknown error occurred.');
-            synonymList.innerHTML = `<p class="placeholder">${result.message}</p>`;
-            processedText.innerHTML = text.replace(/\n/g, '<br>');
+            const placeholder = document.createElement('p');
+            placeholder.className = 'placeholder';
+            placeholder.textContent = result.message;
+            synonymList.innerHTML = ''; // Clear previous content
+            synonymList.appendChild(placeholder);
+            processedText.innerHTML = DOMPurify.sanitize(text.replace(/\n/g, '<br>'));
             hideProgressBar();
             return;
         }
@@ -1688,6 +1824,63 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
         addHistoryItem(text, parts, synonymData);
         setProgress(100, 'Done!');
         hideProgressBar(1500);
+    });
+
+    // --- (Old Save Version Logic - Now handled by dropdown) ---
+
+    let isPro = false;
+
+    // --- Pro Feature Unlock ---
+    const PROMO_CODE = "easyhumanize01"; // A secret promo code
+
+    function updateHumanizerFeatureUI() {
+        if (auth.currentUser) {
+            proFeatureSection.classList.remove('hidden');
+            if (isPro) {
+                reciprocalPromptButton.classList.remove('hidden');
+                promoCodeContainer.classList.add('hidden');
+                humanizerUnlockedView.classList.remove('hidden');
+            } else {
+                reciprocalPromptButton.classList.add('hidden');
+                promoCodeContainer.classList.remove('hidden');
+                humanizerUnlockedView.classList.add('hidden');
+            }
+        } else {
+            proFeatureSection.classList.add('hidden');
+            reciprocalPromptButton.classList.add('hidden');
+        }
+    }
+
+    applyPromoCodeButton.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            showNotification('Login Required', 'You must be logged in to apply a promo code.');
+            return;
+        }
+
+        const code = promoCodeInput.value.trim();
+        if (code === PROMO_CODE) {
+            const userDocRef = doc(db, "users", user.uid);
+            try {
+                await setDoc(userDocRef, { settings: { isPro: true } }, { merge: true });
+                isPro = true;
+                updateHumanizerFeatureUI();
+                promoCodeFeedback.textContent = 'Success! Pro features unlocked.';
+                promoCodeFeedback.style.color = '#28a745';
+                promoCodeFeedback.classList.add('visible');
+                setTimeout(() => promoCodeFeedback.classList.remove('visible'), 3000);
+            } catch (error) {
+                console.error("Error updating user to Pro:", error);
+                promoCodeFeedback.textContent = 'An error occurred. Please try again.';
+                promoCodeFeedback.style.color = '#dc3545';
+                promoCodeFeedback.classList.add('visible');
+            }
+        } else {
+            promoCodeFeedback.textContent = 'Invalid promo code.';
+            promoCodeFeedback.style.color = '#dc3545';
+            promoCodeFeedback.classList.add('visible');
+            setTimeout(() => promoCodeFeedback.classList.remove('visible'), 2000);
+        }
     });
 
     // --- Initialization ---
@@ -1701,4 +1894,112 @@ Example for the word 'book' in 'I need to book a flight to read a book.' (Source
     loadTypingSound();
     textInput.style.zIndex = 1;
     processedText.style.zIndex = -1;
+
+    reciprocalPromptButton.addEventListener('click', async () => {
+        let textToProcess = '';
+        if (window.getComputedStyle(processedText).zIndex > window.getComputedStyle(textInput).zIndex) {
+            textToProcess = processedText.innerText;
+        } else {
+            textToProcess = textInput.value;
+        }
+
+        if (!textToProcess.trim()) {
+            textToProcess = textInput.value || processedText.innerText;
+        }
+
+        if (!textToProcess.trim()) {
+            showNotification('No text to process', 'Please enter or generate some text first.');
+            return;
+        }
+
+        if (!geminiApiKey) {
+            alert('Please set your Gemini API key in the settings first.');
+            openSettingsModal();
+            return;
+        }
+
+        showProgressBar();
+        setProgress(30, 'Detecting language...');
+
+        try {
+            const sourceLanguage = await detectLanguage(textToProcess);
+            if (sourceLanguage === 'Unknown') {
+                showNotification('Language Not Detected', 'Could not determine the language of the text. Please try with a different text.');
+                hideProgressBar();
+                return;
+            }
+
+            setProgress(50, 'Generating response...');
+
+            const promptText = `あなたは、AI検出器を回避するために、入力されたテキストを「再構築」する専門家です。 あなたのタスクは、AIが生成した「完璧で流暢すぎる」原文を、**「英語が母国語ではない人物（例：日本語話者）が、自分の母国語から英語に直訳した」**かのように書き直すことです。 ### 1. 動作モードと制約 1. **一貫性の維持（最重要）:** 入力テキストがどれほど長くても（複数のパラグラフであっても）、**最初から最後まで、すべてのパラグラフとすべての文に対して**、以下の「非ネイティブ翻訳」プロセスを厳格かつ均一に適用し続けてください。途中で流暢な（AI的な）スタイルに戻ることを固く禁じます。 2. **トーン（厳守）:** Semi-formalだが、ぎこちない（Clunky / Translationese）。 3. **内容（厳守）:** 元のテキストが持つ「核となる概念」は維持してください。 4. **文章量（厳守）:** 元のテキストと**ほぼ同じ文章量**を維持してください。 5. **言語:** 入力されたテキストと同じ言語で出力してください。**出力言語は必ず「${sourceLanguage}」にしてください。** 6. **重要（禁止事項）:** **文法ミスやスペルミスを意図的に加えてはいけません。** ぎこちなさは、あくまで「語彙選択」と「構文」で表現してください。 --- ### 2. 実行プロセス（最重要・検出回避の鍵） あなたのタスクは、AIの「完璧な流暢さ（Fluency）」を**テキスト全体で破壊**することです。 #### ステップ1： AIの「高度な語彙」を「単純な直訳語彙」に置き換える AIが好む、洗練された、一語で完結する動詞や名詞（\`disrupts\`, \`exacerbating\`, \`existential threats\`, \`pressing issues\`, \`trapping\`, \`accelerating\`, \`endangering\`など）を、**テキストの全域で例外なく禁止**します。 代わりに、より単純で、直訳的で、少し「冗長な」表現（動詞句）を**一貫して**使ってください。 * **（推奨する置換例）:** * \`disrupts\` → \`brings confusion to\` / \`makes problems for\` * \`pressing issues\` → \`top tasks\` / \`big problems\` * \`trapping heat\` → \`keep heat\` / \`stop heat from escaping\` * \`accelerating\` → \`makes faster\` / \`speeds up\` #### ステップ2： AIの「流暢な構文」を「ぎこちない構文」に変える AIが使う滑らかな構文（分詞構文や関係代名詞の非制限用法）を**テキストの全域で例外なく禁止**します。 代わりに、直訳したかのような、**文を短く区切り**、単純な接続詞（\`and\`, \`so\`, \`because\`）で繋ぐ、ぎこちない構文を**一貫して**使ってください。 * **（推奨する構文例）:** * AI: \`...polar ice caps are melting, endangering species like polar bears and accelerating global warming by reducing...\` * ↓ * 修正案: \`...polar ice caps are melting. This is dangerous for animals like polar bears. Also, this makes global warming faster because...\` (文を分割し、単純な接続詞を使う) #### ステップ3： 禁止事項（AIヒューマナイザーのパターン回避） 以下の「いかにも人間らしい」とAIが学習したパターンは**一切禁止**します。 * **感情語・常Tokyo句:** \`I think\`, \`I believe\`, \`I feel\`, \`let's be honest\`, \`We tend to forget...\` * **AI接続詞:** \`Furthermore\`, \`Moreover\`, \`Therefore\`, \`Thus\`, \`It is worth noting that\` #### ステップ4： 最終出力チェック（句読点の厳格な禁止） 上記のプロセスを**テキスト全体に適用**した後、最終出力の前に、以下の句読点を**すべて削除**してください。 * **アポストロフィ（'）:** 例: don't → do not, can't → cannot * **ハイフン（-）:** 例: state-of-the-art → state of the art ### 3. あなたへの最終指示 * **思考プロセス:** 上記のステップ1〜4を厳密に実行してください。 * **出力:** 修正されたテキストのみを出力してください。思考プロセスや言い訳、追加のコメントは一切含めないでください。 ### 4. 処理するテキスト:`;
+
+            const result = await callGeminiPro(textToProcess, promptText);
+
+            if (result.status === 'success') {
+                textInput.style.zIndex = -1;
+                processedText.style.zIndex = 1;
+                processedText.innerText = result.data;
+                synonymList.innerHTML = '<p class="placeholder">Humanized text generated. Process again to find synonyms.</p>';
+            } else {
+                showNotification('Error', result.message);
+            }
+        } catch (error) {
+            console.error('Reciprocal prompt error:', error);
+        } finally {
+            hideProgressBar();
+        }
+    });
+// Gemini Pro APIを呼び出す関数
+async function callGeminiPro(text, userPrompt) {
+    // geminiApiKey はグローバルスコープで定義されている前提
+    const url =
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${geminiApiKey}`;
+    
+    // プロンプトとユーザーテキストを結合
+    const prompt = `${userPrompt}\n\nText: "${text}"`;
+    const requestBody = { contents: [{ parts: [{ text: prompt }] }] };
+
+    try {
+        const response = await fetch(url, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(requestBody) 
+        });
+        
+        // エラーレスポンスの処理
+        if (!response.ok) {
+            const errorData = await response.json();
+            const errorMessage = errorData.error?.message || 'Unknown API error';
+            return { status: 'error', message: `API Error: ${errorMessage}` };
+        }
+        
+        const data = await response.json();
+        // 結果テキストの抽出
+        const resultText = data.candidates[0]?.content?.parts[0]?.text;
+        
+        if (resultText) {
+            return { status: 'success', data: resultText };
+        } else {
+            return { status: 'error', message: 'API returned an empty response.' };
+        }
+    } catch (error) {
+        console.error('Gemini Pro call error:', error);
+        return { status: 'error', message: 'Network error or other issue.' };
+    }
+}
+
+// モーダルを閉じる処理（モーダル要素が使用されている場合のために残します）
+closeReciprocalPromptModalButton.addEventListener('click', () => {
+    // reciprocalPromptModal はグローバルスコープで定義されている前提
+    reciprocalPromptModal.classList.add('hidden');
+});
+
+reciprocalPromptOkButton.addEventListener('click', () => {
+    reciprocalPromptModal.classList.add('hidden');
+});
+
+reciprocalPromptModal.addEventListener('click', (e) => {
+    if (e.target === reciprocalPromptModal) {
+        reciprocalPromptModal.classList.add('hidden');
+    }
 });

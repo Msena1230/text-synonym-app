@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ユーザー自身のデータのみ読み書きを許可
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // devMemosコレクションは、指定されたUIDのユーザーに限り読み取りを許可
+    match /devMemos/{memoId} {
+      allow read: if request.auth != null && request.auth.uid == 'XAm5Ow7bjmbIDXdqfzz8r2ullmJ3';
+      allow write: if false; // 開発者メモはクライアントからは書き込み不可
+    }
+  }
+}

@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 </head>
 <body>
     <div id="splash-screen">
@@ -51,8 +52,8 @@
             </svg>
         </div>
         <div id="splash-text-container">
-            <div id="splash-text-line1" class="splash-text-line" data-text="The right word is always at your fingertips."></div>
-            <div id="splash-text-line2" class="splash-text-line" data-text="Say what you really mean."></div>
+            <div id="splash-text-line1" class="splash-text-line" data-text="No More Searching. One-Click Replacement."></div>
+            <div id="splash-text-line2" class="splash-text-line" data-text="Intelligent Tool to Redefine Your Writing."></div>
         </div>
     </div>
     <div class="header-icons">
@@ -95,6 +96,19 @@
                 <button id="process-button">Process Text</button>
                 <button id="copy-output-button" class="secondary-button">Copy Output</button>
                 <button id="clear-text-button" class="secondary-button">Clear Text</button>
+                <button id="reciprocal-prompt-button" class="secondary-button hidden" title="Humanize Text"><i class="fas fa-magic"></i></button>
+                <div class="view-dropdown-container version-dropdown-container">
+                    <button id="view-dropdown-button" class="secondary-button" title="View Options">
+                        <i class="fas fa-eye"></i>
+                        <span>View</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="view-dropdown-menu" class="dropdown-menu hidden">
+                        <a href="#" id="view-original-item" class="dropdown-item">Original</a>
+                        <a href="#" id="view-last-saved-item" class="dropdown-item">See Last Saved</a>
+                        <a href="#" id="view-overwrite-item" class="dropdown-item">Overwrite Current Edits</a>
+                    </div>
+                </div>
                 <button id="ai-detect-button" class="secondary-button" title="Detect AI Content"><i class="fas fa-search"></i></button>
             </div>
         </div>
@@ -107,6 +121,16 @@
                     <p class="placeholder">Enter your API key in the settings and process text to see synonym candidates.</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Reciprocal Prompt Modal -->
+    <div id="reciprocal-prompt-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-reciprocal-prompt-modal" class="close-button">&times;</button>
+            <h3 id="reciprocal-prompt-title">Reciprocal Prompt Output</h3>
+            <div id="reciprocal-prompt-output"></div>
+            <button id="reciprocal-prompt-ok-button">OK</button>
         </div>
     </div>
 
@@ -123,10 +147,16 @@
                 </div>
                 <div id="guest-view">
                     <ul class="auth-benefits">
-                        <li><i class="fas fa-infinity"></i> Unlimited Requests</li>
-                        <li><i class="fas fa-sync-alt"></i> Sync History & Bookmarks</li>
-                        <li><i class="fas fa-cogs"></i> Save All Your Settings</li>
+                        <li>Unlimited Requests</li>
+                        <li>Sync History & Bookmarks</li>
+                        <li>Save All Your Settings</li>
                     </ul>
+                    <div class="terms-agreement" style="margin-top: 15px; font-size: 0.9em; display: flex; align-items: center; justify-content: center;">
+                        <input type="checkbox" id="terms-agree-checkbox" style="transform: scale(1.2); margin-right: 8px;">
+                        <label for="terms-agree-checkbox">
+                            I agree to the <a href="terms-of-service.html" target="_blank">Terms of Service</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.
+                        </label>
+                    </div>
                     <div id="login-button" title="Login with Google"><i class="fab fa-google"></i> Login with Google</div>
                 </div>
             </div>
@@ -267,25 +297,35 @@
 
             <div class="setting-section-divider"></div>
 
-            <div class="setting-section-divider"></div>
-
-            <div class="setting-section-divider"></div>
-
-            <h2>Developer Zone</h2>
-            <div id="developer-login-container">
-                <div class="api-key-input-container">
-                    <label for="dev-password">Developer Password:</label>
-                    <input type="password" id="dev-password" placeholder="Enter password">
+            <div id="pro-feature-section" class="setting-section">
+                <div id="promo-code-container">
+                    <h3>Pro Feature Access</h3>
+                    <p>Enter a promo code to unlock advanced features.</p>
+                    <div class="api-key-input-container">
+                        <label for="promo-code-input">Promo Code:</label>
+                        <input type="text" id="promo-code-input" placeholder="Enter code">
+                    </div>
+                    <button id="apply-promo-code-button" class="save-button">Apply Code</button>
+                    <div id="promo-code-feedback" class="save-feedback"></div>
                 </div>
-                <button id="dev-login-button" class="save-button">Login</button>
-                <div id="dev-login-feedback" class="save-feedback"></div>
+                <div id="humanizer-unlocked-view" class="hidden">
+                    <p><i class="fas fa-check-circle"></i> Pro features are currently unlocked.</p>
+                    <p>Your account has permanent access to Pro features.</p>
+                </div>
             </div>
 
-            <div id="developer-memo-container" class="hidden">
-                <h4>Developer Memo</h4>
-                <textarea id="dev-memo-pad" placeholder="Your notes here..." readonly></textarea>
-            </div>
+            <div class="setting-section-divider"></div>
 
+            <div class="setting-section-divider"></div>
+
+            <div class="setting-section-divider"></div>
+
+
+
+            <div class="modal-footer-branding">
+                <p>© 2025 SynonymFinderPro Inc. All Rights Reserved.</p>
+                <p><a href="privacy-policy.html" target="_blank">Privacy Policy</a> | <a href="terms-of-service.html" target="_blank">Terms of Service</a></p>
+            </div>
         </div>
     </div>
 
@@ -309,15 +349,21 @@
     <div id="favorite-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="close-favorite-modal" class="close-button">&times;</button>
-            <h2>Favorited Words</h2>
-            <div style="display: flex; align-items: center; background-color: #f1f3f4; border-radius: 20px; padding: 8px 12px; margin-bottom: 10px;">
-                <i class="fas fa-search" style="color: #5f6368; margin-right: 8px;"></i>
-                <input type="text" id="favorite-search" placeholder="Search favorites..." style="border: none; outline: none; background: transparent; width: 100%; font-size: 1em; color: #202124;">
+            <div class="modal-header">
+                <h2>Favorited Words</h2>
+                <div class="search-bar-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="favorite-search" placeholder="Search favorites...">
+                </div>
             </div>
-            <div id="favorite-list">
-                <!-- お気に入りの単語がここに表示されます -->
+            <div class="modal-body">
+                <div id="favorite-list">
+                    <!-- お気に入りの単語がここに表示されます -->
+                </div>
             </div>
-            <button id="start-favorite-flashcards-button" class="save-button">Start Favorite Flashcard Quiz</button>
+            <div class="modal-footer">
+                <button id="start-favorite-flashcards-button" class="save-button">Start Favorite Flashcard Quiz</button>
+            </div>
         </div>
     </div>
 
@@ -362,37 +408,7 @@
             <span id="progress-percentage">(0%)</span>
     </div>
 
-    <!-- New Memo Modal -->
-    <div id="new-memo-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button id="close-new-memo-modal" class="close-button">&times;</button>
-            <h3>Create New Developer Memo</h3>
-            <div class="api-key-input-container">
-                <label for="new-memo-name">Memo Name:</label>
-                <input type="text" id="new-memo-name" placeholder="Enter a name for the memo">
-            </div>
-            <div class="api-key-input-container">
-                <label for="new-memo-password">Password:</label>
-                <input type="password" id="new-memo-password" placeholder="Enter a password for this memo">
-            </div>
-            <button id="save-new-memo-btn" class="save-button">Save Memo</button>
-            <div id="new-memo-feedback" class="save-feedback"></div>
-        </div>
-    </div>
 
-    <!-- Unlock Memo Modal -->
-    <div id="unlock-memo-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button id="close-unlock-memo-modal" class="close-button">&times;</button>
-            <h3 id="unlock-memo-title">Unlock Memo</h3>
-            <div class="api-key-input-container">
-                <label for="unlock-memo-password">Password:</label>
-                <input type="password" id="unlock-memo-password" placeholder="Enter password">
-            </div>
-            <button id="unlock-memo-btn" class="save-button">Unlock</button>
-            <div id="unlock-memo-feedback" class="save-feedback"></div>
-        </div>
-    </div>
 
             <script type="module" src="script.js"></script>
 </body>
